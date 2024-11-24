@@ -7,4 +7,4 @@ router.get("/", (req, res) => {
   res.send("All users");
 });
 
-export const user = router;
+export const users = router;
