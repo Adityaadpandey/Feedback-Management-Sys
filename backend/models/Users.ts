@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IUser extends Document {
   name: string;
   email: string;
-  phone: Int8Array;
+  phone: number;
   password: string;
   subscription_plan: string;
   role: string; 
@@ -20,7 +20,7 @@ const UserSchema: Schema = new Schema({
     required: true,
   },
   phone: {
-    type: Int8Array,
+    type: Number,
     required: true,
   },
   password: {

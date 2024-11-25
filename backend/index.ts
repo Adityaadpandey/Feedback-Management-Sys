@@ -9,7 +9,12 @@ import { reports } from "./routes/reports";
 import { responses } from "./routes/responses";
 import { users } from "./routes/users";
 
+// util for mongo
+import {connectDB} from "./utils/db";
+
 const app = express();
+app.use(express.json());
+connectDB();
 
 app.get("/", (req, res) => {
   res.send("Hello World");
