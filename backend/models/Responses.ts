@@ -9,14 +9,19 @@ const responseSchema = new mongoose.Schema({
   submittedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-  }, // Optional for anonymous submissions
+    default: null, // Allows anonymous submissions
+  },
   responses: [
     {
       questionId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
+        ref: "Form.questions", // Optional: Reference the question directly
       },
-      answer: mongoose.Schema.Types.Mixed, // Can be string, number, file URL, etc.
+      answer: {
+        type: mongoose.Schema.Types.Mixed, // Can store different data types
+        required: true,
+      },
     },
   ],
   submittedAt: {
@@ -25,4 +30,4 @@ const responseSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Response", responseSchema);
+export default mongoose.model("Response", responseSchema);

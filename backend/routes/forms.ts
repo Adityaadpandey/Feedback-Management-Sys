@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
-import authenticate from "../middleware/authenticator"; // Your authentication middleware
+import {authenticate} from "../middleware/authenticator"; // Your authentication middleware
 import Form from "../models/Form"; // Your Form model
 
 const router = Router();

@@ -11,7 +11,7 @@ interface decoded {
   role: string;
 }
 
-const authenticate = async (req, res, next) => {
+export const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -22,7 +22,7 @@ const authenticate = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as decoded;
-    const user = await User.findOne({clerkId:decoded.clerkId}); // Assuming your JWT contains `userId`
+    const user = await User.findOne({ clerkId: decoded.clerkId }); // Assuming your JWT contains `userId`
 
     if (!user) {
       return res.status(401).json({ message: "Unauthorized, user not found" });
@@ -35,7 +35,29 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-export default authenticate;
+export const optionalAuth = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    // Proceed as anonymous if no token is provided
+    req.user = null;
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as decoded;
+    const user = await User.findOne({ clerkId: decoded.clerkId }); // Assuming your JWT contains `userId`
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    req.user = user; // Attach user to the request object
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};
 
 // we can directly access the clerk id and auth it while the form is being created and things like that
 // import { clerkMiddleware } from '@clerk/express'
