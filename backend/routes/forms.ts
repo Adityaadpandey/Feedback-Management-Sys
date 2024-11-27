@@ -1,6 +1,6 @@
-import { clerkMiddleware } from "@clerk/express";
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
+import authenticate from "../middleware/authenticator"; // Your authentication middleware
 import Form from "../models/Form"; // Your Form model
 
 const router = Router();
@@ -8,7 +8,7 @@ const router = Router();
 // Create form endpoint
 router.post(
   "/create",
-  clerkMiddleware(), // Ensure the user is authenticated
+  authenticate, // Ensure the user is authenticated
   [
     body("title").notEmpty().withMessage("Title is required"),
     body("questions").isArray().withMessage("Questions must be an array"),
@@ -33,39 +33,9 @@ router.post(
     body("questions.*.options")
       .optional()
       .isArray()
-      .withMessage(
-        "Options must be an array for multiple-choice and similar question types"
-      ),
-    body("theme")
-      .optional()
-      .isObject()
-      .withMessage("Theme should be an object")
-      .bail()
-      .custom((value) => {
-        if (value?.color && typeof value.color !== "string") {
-          throw new Error("Color should be a valid string");
-        }
-        if (value?.font && typeof value.font !== "string") {
-          throw new Error("Font should be a valid string");
-        }
-        if (value?.background && typeof value.background !== "string") {
-          throw new Error("Background should be a valid string or URL");
-        }
-        return true;
-      }),
-    body("isPublic")
-      .optional()
-      .isBoolean()
-      .withMessage("isPublic should be a boolean"),
-    body("responseLimit")
-      .optional()
-      .isInt({ min: 0 })
-      .withMessage(
-        "Response limit should be a positive integer or zero for unlimited responses"
-      ),
-    body("timer").optional().isInt().withMessage("Timer should be in seconds"),
+      .withMessage("Options must be an array for multiple-choice and similar question types"),
   ],
-  async (req, res, next) => {
+  async (req, res) => {
     // Validate request body
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -73,15 +43,9 @@ router.post(
     }
 
     try {
-      // Get the userId (clerkId) from Clerk middleware
-      const clerkId = req.header?.userId;
-  
-      if (!clerkId) {
-        return res.status(401).json({
-          message: "Unauthorized. ClerkId is missing.",
-        });
-      }
-  
+      // Use the authenticated user's ID
+      const { _id: userId } = req.user;
+
       const {
         title,
         description,
@@ -92,12 +56,12 @@ router.post(
         responseLimit,
         timer,
       } = req.body;
-  
+
       // Create a new form
       const newForm = new Form({
         title,
         description,
-        createdBy: clerkId, // Set the `createdBy` field to the authenticated user's ID
+        createdBy: userId, // Use authenticated user's ID as `createdBy`
         collaborators,
         theme,
         isPublic,
@@ -105,10 +69,10 @@ router.post(
         timer,
         questions,
       });
-  
+
       // Save the form to the database
       await newForm.save();
-  
+
       res.status(201).json({
         message: "Form created successfully",
         form: newForm,
@@ -120,7 +84,8 @@ router.post(
         error,
       });
     }
-  });
-  
+  }
+);
+
 
 export const form = router;
