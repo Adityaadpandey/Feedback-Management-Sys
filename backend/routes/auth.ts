@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { Request, Response, Router } from "express";
+import { Router } from "express";
 import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import User from "../models/Users";
@@ -11,12 +11,9 @@ const JWT_SECRET = "your-secret-key";
 const JWT_REFRESH_SECRET = "your-refresh-secret-key";
 const refreshTokens: string[] = [];
 
-
-
-
 // POST /v1/auth/register
 router.post("/register", async (req, res) => {
-  const { name, email, phone, password, role } = req.body;
+  const { name, email, phone, role, clerkId } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -25,14 +22,12 @@ router.post("/register", async (req, res) => {
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = new User({
       name,
       email,
       phone,
-      password: hashedPassword,
       role,
+      clerkId,
     });
 
     await newUser.save();
@@ -57,7 +52,7 @@ router.post(
       return;
     }
 
-    const { email, password } = req.body;
+    const { email } = req.body;
 
     try {
       const user = await User.findOne({ email });
@@ -66,18 +61,17 @@ router.post(
         return;
       }
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        res.status(400).json({ message: "Invalid email or password" });
-        return;
-      }
+      
 
       const accessToken = jwt.sign(
-        { email: user.email, role: user.role },
+        { clerkId: user.clerkId, role: user.role },
         JWT_SECRET,
         { expiresIn: "15m" }
       );
-      const refreshToken = jwt.sign({ email: user.email }, JWT_REFRESH_SECRET);
+      const refreshToken = jwt.sign(
+        { clerkId: user.clerkId },
+        JWT_REFRESH_SECRET
+      );
 
       refreshTokens.push(refreshToken);
 
@@ -87,52 +81,5 @@ router.post(
     }
   }
 );
-
-// POST /v1/auth/logout
-router.post("/logout", (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    res.status(400).json({ message: "Refresh token is required" });
-    return;
-  }
-
-  const index = refreshTokens.indexOf(refreshToken);
-  if (index === -1) {
-    res.status(400).json({ message: "Invalid refresh token" });
-    return;
-  }
-
-  refreshTokens.splice(index, 1);
-  res.json({ message: "Logged out successfully" });
-});
-
-// POST /v1/auth/refresh-token
-router.post("/refresh-token", (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    res.status(400).json({ message: "Refresh token is required" });
-    return;
-  }
-
-  if (!refreshTokens.includes(refreshToken)) {
-    res.status(400).json({ message: "Invalid refresh token" });
-    return;
-  }
-
-  try {
-    const payload = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as {
-      email: string;
-    };
-    const newAccessToken = jwt.sign({ email: payload.email }, JWT_SECRET, {
-      expiresIn: "15m",
-    });
-
-    res.json({ accessToken: newAccessToken });
-  } catch (error) {
-    res.status(400).json({ message: "Invalid refresh token" });
-  }
-});
 
 export const auth = router;

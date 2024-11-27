@@ -7,7 +7,6 @@ import { auth } from "./routes/auth";
 import { form } from "./routes/forms";
 import { reports } from "./routes/reports";
 import { responses } from "./routes/responses";
-import { users } from "./routes/users";
 
 // util for mongo
 import {connectDB} from "./utils/db";
@@ -21,7 +20,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/v1/auth", auth);
-app.use("/v1/users", users);
 app.use("/v1/forms", form);
 app.use("/v1/responses", responses);
 app.use("/v1/reports", reports);

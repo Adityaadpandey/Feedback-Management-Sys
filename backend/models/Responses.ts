@@ -1,26 +1,28 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-export interface IResponse extends Document {
-  form_id: string;
-  responses: Array<{ field_id: string; answer: string }>;
-}
-
-const ResponseSchema: Schema = new Schema({
-  form_id: {
+const responseSchema = new mongoose.Schema({
+  formId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Form",
     required: true,
   },
+  submittedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  }, // Optional for anonymous submissions
   responses: [
     {
-      field_id: String,
-      answer: String,
+      questionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+      },
+      answer: mongoose.Schema.Types.Mixed, // Can be string, number, file URL, etc.
     },
   ],
-  submitted_at: {
+  submittedAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-export default mongoose.model<IResponse>("Response", ResponseSchema);
+module.exports = mongoose.model("Response", responseSchema);
