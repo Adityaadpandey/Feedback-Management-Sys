@@ -11,10 +11,6 @@ const Navbar = () => {
           icon: <Home size={24} />,
         },
         {
-          name: "About",
-          link: "/about",
-        },
-        {
           name: "Contact",
           link: "/contact",
           icon: <Contact size={24} />,
