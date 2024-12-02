@@ -1,6 +1,7 @@
 import Navbar from "@/components/globals/navbar";
 import { ThemeProvider } from "@/components/globals/theme-provider";
 import { ModeToggle } from "@/components/globals/theme-toogle";
+import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
@@ -18,7 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+      <ClerkProvider>
+           <html lang="en" suppressHydrationWarning>
       <body className={font.className}>
         <ThemeProvider
           attribute="class"
@@ -32,5 +34,6 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
+   </ClerkProvider>
   );
 }

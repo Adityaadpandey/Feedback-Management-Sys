@@ -8,7 +8,7 @@ const page = () => {
       <h1 className="text-5xl mb-6">
         Welcome to the {}
         <Highlight className="text-5xl" time={2}>
-          FeedBack Management System+
+          FeedBack Management System
         </Highlight>
       </h1>
       <p>
@@ -22,19 +22,3 @@ const page = () => {
 };
 
 export default page;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
