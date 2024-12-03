@@ -8,7 +8,9 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    // "strict": true,
+    "strict": false,
+    "noImplicitAny": false, // Allow implicit any type
+    "exactOptionalPropertyTypes": false, // Ensures looser checks for optional properties
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -26,8 +28,7 @@
       "@/*": [
         "./src/*"
       ]
-    },
-    "strict": false
+    }
   },
   // "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "include": [
