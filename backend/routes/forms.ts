@@ -93,6 +93,7 @@ router.get('/get/:id', async (req, res):Promise<any> => {
     try {
         const { id } = req.params;
         const form = await Form.findById(id);
+
         // Check if form exists
 
         if (!form) {
@@ -116,6 +117,41 @@ router.get('/get/:id', async (req, res):Promise<any> => {
         });
     }
 });
+
+
+// Update form by ID
+router.put('/update/:id', authenticate, async (req:any, res):Promise<any> => {
+    try {
+        const { id } = req.params;
+        const form = await Form.findById(id);
+        const { _id: userId } = req.user;  // from authenticate middleware
+
+        // Check if form exists
+        if (!form) {
+            return res.status(404).json({
+                message: "Form not found"
+            });
+        }
+        // Check if the user is the creator of the form
+        if (form.createdBy.toString() !== userId.toString()) {
+            return res.status(403).json({
+                message: "You are not authorized to update this form"
+            });
+        }
+        // Update the form
+        const updatedForm = await Form
+            .findByIdAndUpdate(id, req
+                .body, { new: true });
+        res.json(updatedForm);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Internal server error",
+            error
+        });
+    }
+}
+);
 
 
 export const form = router;
