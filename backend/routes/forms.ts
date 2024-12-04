@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
-import {authenticate} from "../middleware/authenticator"; // Your authentication middleware
+import { authenticate } from "../middleware/authenticator"; // Your authentication middleware
 import Form from "../models/Form"; // Your Form model
 
 const router = Router();
 
-// Create form endpoint
+// form creation with validation
 router.post(
   "/create",
-  authenticate, // Ensure the user is authenticated
+  authenticate,
   [
     body("title").notEmpty().withMessage("Title is required"),
     body("questions").isArray().withMessage("Questions must be an array"),
@@ -44,7 +44,7 @@ router.post(
 
     try {
       // Use the authenticated user's ID
-      const { _id: userId } = req.user;
+      const { _id: userId } = req.user;   // from authenticate middleware
 
       const {
         title,
@@ -86,6 +86,36 @@ router.post(
     }
   }
 );
+
+
+// Get form by ID and share it
+router.get('/get/:id', async (req, res):Promise<any> => {
+    try {
+        const { id } = req.params;
+        const form = await Form.findById(id);
+        // Check if form exists
+
+        if (!form) {
+            return res.status(404).json({
+                message: "Form not found"
+            });
+        }
+        // Check if form is public
+        if (!form.isPublic) {
+            return res.status(403).json({
+                message: "Form is not public"
+            });
+        }
+        // Return the form
+        res.json(form);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Internal server error",
+            error
+        });
+    }
+});
 
 
 export const form = router;
