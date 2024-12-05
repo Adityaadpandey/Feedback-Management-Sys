@@ -5,7 +5,18 @@ import * as React from "react";
 export interface FormQuestion {
   _id: string;
   questionText: string;
-  questionType: "short-answer" | "rating" | "paragraph" | "checkbox";
+  questionType:
+    | "short-answer"
+    | "paragraph"
+    | "multiple-choice"
+    | "checkbox"
+    | "dropdown"
+    | "file-upload"
+    | "date"
+    | "time"
+    | "rating"
+    | "linear-scale"
+    | "matrix";
   options?: string[];
 }
 
@@ -43,17 +54,6 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
               onChange={(e) => handleInputChange(question._id, e.target.value)}
             />
           )}
-          {question.questionType === "rating" && (
-            <input
-              type="number"
-              min="0"
-              max="100"
-              className={cn(
-                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              )}
-              onChange={(e) => handleInputChange(question._id, e.target.value)}
-            />
-          )}
           {question.questionType === "paragraph" && (
             <textarea
               rows={4}
@@ -63,10 +63,26 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
               onChange={(e) => handleInputChange(question._id, e.target.value)}
             ></textarea>
           )}
+          {question.questionType === "multiple-choice" && (
+            <div className="mt-2 space-y-2">
+              {question.options?.map((option, i) => (
+                <label key={i} className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name={question._id}
+                    value={option}
+                    className={cn("rounded focus:ring-indigo-500")}
+                    onChange={(e) => handleInputChange(question._id, e.target.value)}
+                  />
+                  <span>{option}</span>
+                </label>
+              ))}
+            </div>
+          )}
           {question.questionType === "checkbox" && (
             <div className="mt-2 space-y-2">
               {question.options?.map((option, i) => (
-                <label key={i} className="flex items-center space-x-2 text-gray-800">
+                <label key={i} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     value={option}
@@ -88,10 +104,111 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
               ))}
             </div>
           )}
+          {question.questionType === "dropdown" && (
+            <select
+              className={cn(
+                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              )}
+              onChange={(e) => handleInputChange(question._id, e.target.value)}
+            >
+              <option value="">Select an option</option>
+              {question.options?.map((option, i) => (
+                <option key={i} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          )}
+          {question.questionType === "file-upload" && (
+            <input
+              type="file"
+              className={cn(
+                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              )}
+              onChange={(e) =>
+                handleInputChange(question._id, (e.target as HTMLInputElement).files?.[0])
+              }
+            />
+          )}
+          {question.questionType === "date" && (
+            <input
+              type="date"
+              className={cn(
+                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              )}
+              onChange={(e) => handleInputChange(question._id, e.target.value)}
+            />
+          )}
+          {question.questionType === "time" && (
+            <input
+              type="time"
+              className={cn(
+                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              )}
+              onChange={(e) => handleInputChange(question._id, e.target.value)}
+            />
+          )}
+          {question.questionType === "rating" && (
+            <input
+              type="number"
+              min="0"
+              max="5"
+              className={cn(
+                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              )}
+              onChange={(e) => handleInputChange(question._id, e.target.value)}
+            />
+          )}
+          {question.questionType === "linear-scale" && (
+            <input
+              type="range"
+              min="1"
+              max="10"
+              className={cn("w-full mt-2")}
+              onChange={(e) => handleInputChange(question._id, e.target.value)}
+            />
+          )}
+          {question.questionType === "matrix" && (
+            <table className="mt-2 border-collapse border border-gray-300 w-full">
+              <thead>
+                <tr>
+                  <th></th>
+                  {question.options?.map((option, i) => (
+                    <th key={i} className="border border-gray-300 p-2">
+                      {option}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {question.options?.map((rowOption, i) => (
+                  <tr key={i}>
+                    <td className="border border-gray-300 p-2">{rowOption}</td>
+                    {question.options?.map((colOption, j) => (
+                      <td key={j} className="border border-gray-300 text-center">
+                        <input
+                          type="radio"
+                          name={`${question._id}-${i}`}
+                          value={colOption}
+                          className={cn("focus:ring-indigo-500")}
+                          onChange={(e) =>
+                            handleInputChange(question._id, {
+                              ...responses[question._id],
+                              [rowOption]: colOption,
+                            })
+                          }
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       ))}
-          <Button>
-              {buttonText}
+      <Button type="submit" className="w-full">
+        {buttonText}
       </Button>
     </form>
   );
