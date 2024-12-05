@@ -1,6 +1,6 @@
 "use client";
 
-import Form, { FormQuestion } from "@/components/ui/form-comp";
+import Form, { FormQuestion } from "@/components/globals/form-comp";
 import axios from "axios";
 import { useState } from "react";
 

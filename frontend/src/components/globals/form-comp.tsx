@@ -7,13 +7,14 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Label } from "./label";
+import { Slider } from "../ui/slider";
 
 export interface FormQuestion {
     _id: string;
@@ -132,6 +133,7 @@ const Form: React.FC<FormProps> = ({
                             </PopoverContent>
                         </Popover>
                     )}
+                    {/* checkbox */}
                     {question.questionType === "checkbox" && (
                         <div className="mt-2 space-y-2">
                             {question.options?.map((option, i) => (
@@ -159,10 +161,11 @@ const Form: React.FC<FormProps> = ({
                     )}
 
 
+                    {/* Dropdown */}
                     {question.questionType === "dropdown" && (
                         <select
                             className={cn(
-                                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-black bg-inherit"
                             )}
                             onChange={(e) => handleInputChange(question._id, e.target.value)}
                         >
@@ -174,6 +177,9 @@ const Form: React.FC<FormProps> = ({
                             ))}
                         </select>
                     )}
+
+
+                    {/* File Upload */}
                     {question.questionType === "file-upload" && (
                         <Input
                             type="file"
@@ -185,6 +191,8 @@ const Form: React.FC<FormProps> = ({
                             }
                         />
                     )}
+
+                    {/* Time */}
                     {question.questionType === "time" && (
                         <Input
                             type="time"
@@ -194,26 +202,35 @@ const Form: React.FC<FormProps> = ({
                             onChange={(e) => handleInputChange(question._id, e.target.value)}
                         />
                     )}
+
+                    {/* Rating */}
                     {question.questionType === "rating" && (
                         <Input
                             type="number"
                             min="0"
-                            max="5"
+                            max="10"
                             className={cn(
-                                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                                "w-[20%] mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                             )}
+                            placeholder="0-10"
                             onChange={(e) => handleInputChange(question._id, e.target.value)}
                         />
                     )}
+
+
+                    {/* Linear Scale */}
                     {question.questionType === "linear-scale" && (
-                        <Input
-                            type="range"
-                            min="1"
-                            max="10"
+                        <Slider
+                            defaultValue={[6]}
+                            min={0}
+                            max={10}
                             className={cn("w-full mt-2")}
                             onChange={(e) => handleInputChange(question._id, e.target.value)}
                         />
                     )}
+
+
+                    {/* Matrix */}
                     {question.questionType === "matrix" && (
                         <table className="mt-2 border-collapse border border-gray-300 w-full">
                             <thead>
