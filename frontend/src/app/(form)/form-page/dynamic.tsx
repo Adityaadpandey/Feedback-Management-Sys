@@ -4,21 +4,13 @@ import Form, { FormQuestion } from "@/components/ui/form-comp";
 import axios from "axios";
 import { useState } from "react";
 
-const DynamicForm = ({ formData }) => {
+const DynamicForm = ({ formData }: { formData: any }) => {
   // State to hold form responses
   const [responses, setResponses] = useState<Record<string, any>>({});
 
-  // Handle input changes for dynamic form
-  const handleInputChange = (questionId: string, value: any) => {
-    setResponses((prev) => ({
-      ...prev,
-      [questionId]: value,
-    }));
-  };
-
   // Submit handler
-  const handleSubmit = async () => {
-    const formattedResponses = Object.entries(responses).map(
+  const handleSubmit = async (formResponses: Record<string, any>) => {
+    const formattedResponses = Object.entries(formResponses).map(
       ([questionId, answer]) => ({
         questionId,
         answer,
@@ -53,11 +45,10 @@ const DynamicForm = ({ formData }) => {
       {/* Form Component */}
       <Form
         questions={formData.questions as FormQuestion[]}
-        onSubmit={handleSubmit}
+        onSubmit={(responses) => handleSubmit(responses)}
         buttonText="Submit Form"
       />
-      </div>
-
+    </div>
   );
 };
 

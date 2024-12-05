@@ -1,5 +1,5 @@
 import express from "express";
-
+import CORS from 'cors'
 // Routes
 import { admin } from "./routes/admin";
 import { analytics } from "./routes/analytics";
@@ -12,6 +12,7 @@ import { responses } from "./routes/responses";
 import {connectDB} from "./utils/db";
 
 const app = express();
+app.use(CORS())
 app.use(express.json());
 connectDB();
 
