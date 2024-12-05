@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { cn } from "@/lib/utils";
 import * as React from "react";
+import { Input } from './Input';
+import { Calendar } from './calendar';
 
 export interface FormQuestion {
   _id: string;
@@ -46,11 +48,8 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
         <div key={question._id} className="space-y-2">
           <label className="block text-lg font-medium text-gray-800">{question.questionText}</label>
           {question.questionType === "short-answer" && (
-            <input
+            <Input
               type="text"
-              className={cn(
-                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              )}
               onChange={(e) => handleInputChange(question._id, e.target.value)}
             />
           )}
@@ -67,7 +66,7 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
             <div className="mt-2 space-y-2">
               {question.options?.map((option, i) => (
                 <label key={i} className="flex items-center space-x-2">
-                  <input
+                  <Input
                     type="radio"
                     name={question._id}
                     value={option}
@@ -83,7 +82,7 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
             <div className="mt-2 space-y-2">
               {question.options?.map((option, i) => (
                 <label key={i} className="flex items-center space-x-2">
-                  <input
+                  <Input
                     type="checkbox"
                     value={option}
                     className={cn("rounded focus:ring-indigo-500")}
@@ -120,7 +119,7 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
             </select>
           )}
           {question.questionType === "file-upload" && (
-            <input
+            <Input
               type="file"
               className={cn(
                 "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
@@ -131,16 +130,12 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
             />
           )}
           {question.questionType === "date" && (
-            <input
-              type="date"
-              className={cn(
-                "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-              )}
+            <Calendar
               onChange={(e) => handleInputChange(question._id, e.target.value)}
             />
           )}
           {question.questionType === "time" && (
-            <input
+            <Input
               type="time"
               className={cn(
                 "w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
@@ -149,7 +144,7 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
             />
           )}
           {question.questionType === "rating" && (
-            <input
+            <Input
               type="number"
               min="0"
               max="5"
@@ -160,7 +155,7 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
             />
           )}
           {question.questionType === "linear-scale" && (
-            <input
+            <Input
               type="range"
               min="1"
               max="10"
@@ -186,7 +181,7 @@ const Form: React.FC<FormProps> = ({ questions, onSubmit, buttonText = "Submit" 
                     <td className="border border-gray-300 p-2">{rowOption}</td>
                     {question.options?.map((colOption, j) => (
                       <td key={j} className="border border-gray-300 text-center">
-                        <input
+                        <Input
                           type="radio"
                           name={`${question._id}-${i}`}
                           value={colOption}
