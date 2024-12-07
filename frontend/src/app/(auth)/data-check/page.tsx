@@ -3,14 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from "react";
 
 const UserInfoForm: React.FC = () => {
-  const router = useRouter()
+    const router = useRouter();
     const { user } = useUser(); // Clerk's user context
     const [step, setStep] = useState(1);
-
     const [formData, setFormData] = useState({
         email: "",
         phone: "",
@@ -18,20 +17,35 @@ const UserInfoForm: React.FC = () => {
         clerkId: "",
     });
 
-    // Populate form data from Clerk's user object
+    // Check if user is logged in and exists
     useEffect(() => {
-        const fetchUserData = async () => {
-            const email = user?.primaryEmailAddress?.emailAddress || "";
-            const name = user?.fullName || `${user?.firstName || ""} ${user?.lastName || ""}`;
-            const phone = user?.primaryPhoneNumber?.phoneNumber || ''  ;
-            const clerkId = user?.id;
-            setFormData({ email, phone, name, clerkId });
+        const checkUserLogin = async () => {
+            if (user) {
+                const email = user?.primaryEmailAddress?.emailAddress || "";
+                const phone = user?.primaryPhoneNumber?.phoneNumber || '';
+                const clerkId = user?.id;
+
+                // Prepare the data to send to the server
+                const data = { email, phone, clerkId };
+
+                try {
+                    const response = await axios.post("http://localhost:8080/v1/auth/login", data);
+                    if (response.status === 200) {
+                        console.log("User already exists, logged in successfully.");
+                        localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+                        router.push("/"); // Redirect to home page
+                    } else {
+                        console.log("User doesn't exist, proceed to registration.");
+                    }
+                } catch (error) {
+                    console.error("Error during login check:", error);
+                    // Handle the error (e.g., user doesn't exist or login failed)
+                }
+            }
         };
 
-        if (user) {
-            fetchUserData();
-        }
-    }, [user]);
+        checkUserLogin(); // Run on page load
+    }, [user, router]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,30 +60,27 @@ const UserInfoForm: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-    try {
-        // If phone is an empty string, set it to null
-        if (formData.phone === "") {
-            formData.phone = null;
+        try {
+            // If phone is an empty string, set it to null
+            if (formData.phone === "") {
+                formData.phone = null;
+            }
+
+            // Register the user if they don't exist
+            const response = await axios.post("http://localhost:8080/v1/auth/register", formData);
+            if (response.status === 200) {
+                console.log("User registered successfully.");
+                localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+                router.push("/"); // Redirect to home page
+            } else {
+                console.error("Error registering user:", response.data);
+                alert("Failed to register user.");
+            }
+        } catch (error) {
+            console.error("Error saving user data:", error);
+            alert("Failed to save data.");
         }
-
-        const response = await axios.post("http://localhost:8080/v1/auth/login", formData);
-        if (response.status === 200) {
-            console.log("Server Response:", response.data);
-            localStorage.setItem("user", JSON.stringify(response.data.accessToken));
-            router.push("/");
-
-        } else {
-            console.error("Error registering user:", response.data);
-            alert("Failed to register user.");
-
-        }
-
-    } catch (error) {
-        console.error("Error saving user data:", error);
-        alert("Failed to save data.");
-    }
-};
-
+    };
 
     return (
         <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
