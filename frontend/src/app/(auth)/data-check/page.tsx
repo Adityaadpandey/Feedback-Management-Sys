@@ -16,9 +16,11 @@ const UserInfoForm: React.FC = () => {
         name: "",
         clerkId: "",
     });
+    const [loader,setloader] = useState(true);
 
     // Check if user is logged in and exists
     useEffect(() => {
+    setloader(true);
         const checkUserLogin = async () => {
             if (user) {
                 const email = user?.primaryEmailAddress?.emailAddress || "";
@@ -81,6 +83,8 @@ const UserInfoForm: React.FC = () => {
             alert("Failed to save data.");
         }
     };
+
+    if (loader) return <div>Loading...</div>;
 
     return (
         <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
