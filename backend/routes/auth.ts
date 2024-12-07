@@ -45,8 +45,7 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({  clerkId });
     if (!user) {
-      res.status(400).json({ message: "Invalid email or password" });
-      return;
+      
     }
 
     const accessToken = jwt.sign(
