@@ -29,13 +29,16 @@ const UserSchema: Schema = new Schema(
       lowercase: true, // Ensures email is stored in lowercase
     },
     phone: {
-      type: Number,
-      validate: {
-        validator: function (v: number) {
-          return /^\d{10}$/.test(v.toString()); // Validates a 10-digit phone number
+        type: Number,
+        validate: {
+            // Only validate the phone number if it's not null or undefined
+            validator: function (v: number) {
+                if (v === null || v === undefined) return true; // Allow null or undefined
+                return /^\d{10}$/.test(v.toString()); // Validates a 10-digit phone number
+            },
+            message: (props: any) => `${props.value} is not a valid phone number!`,
         },
-        message: (props: any) => `${props.value} is not a valid phone number!`,
-      },
+        required: false, // Make sure the field is not required
     },
     subscription_plan: {
       type: String,
