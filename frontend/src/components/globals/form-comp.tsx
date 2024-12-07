@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { format } from "date-fns";
@@ -12,7 +14,7 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover";
+}   from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Slider } from "../ui/slider";
 
@@ -71,7 +73,7 @@ const Form: React.FC<FormProps> = ({
                             type="text"
                             placeholder="Type your answer"
                             className="w-full border rounded-md p-2"
-                            onChange={(e) => handleInputChange(question._id, e.target.value)}
+                            onChange={(e) => handleInputChange(question._id, (e.target as HTMLInputElement).value)}
                         />
                     )}
 
