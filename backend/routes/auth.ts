@@ -45,7 +45,7 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({  clerkId });
     if (!user) {
-      
+        res.status(401).json({ message: "Invalid credentials" });
     }
 
     const accessToken = jwt.sign(
