@@ -1,21 +1,13 @@
-'use client'
-import { useUser } from '@clerk/nextjs';
 
-const Page = () => {
-    const { user } = useUser();
-    return (
-        <div>
-            {user ? (
-                <>
-                    <p>User ID: {user.id}</p>
-                    <p>Email: {user.primaryEmailAddress?.emailAddress}</p>
-                    <p>Name: {user.firstName}</p>
-                </>
-            ) : (
-                <p>Loading user...</p>
-            )}
-        </div>
-    );
-};
+const page = () => {
+  return (
+      <>
 
-export default Page;
+                <h1 className='text-2xl font-bold'>Dashboard</h1>
+
+      </>
+
+  )
+}
+
+export default page
