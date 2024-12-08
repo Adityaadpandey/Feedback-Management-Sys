@@ -1,9 +1,11 @@
 "use client";
+import { Button } from '@/components/ui/button';
 import { HeroHighlight } from "@/components/ui/hero-highlight";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
-import { Button } from '@/components/ui/button';
 import { useRouter } from "next/navigation";
-const page = () => {
+
+
+const Page = () => {
     const router = useRouter();
     const words = [
         {
@@ -44,4 +46,4 @@ const page = () => {
 }
 
 
-export default page;
+export default Page;
