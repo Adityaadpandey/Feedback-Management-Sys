@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { optionalAuth } from "../middleware/authenticator";
+import { authenticate } from "../middleware/authenticator";
 import Form from "../models/Form";
 import ResponseModel from "../models/Responses";
 
@@ -16,7 +16,7 @@ interface RequestWithUser extends Request {
 const router = Router();
 
 // Analytics panel route
-router.get("/", optionalAuth, async (req: RequestWithUser, res: Response): Promise<any> => {
+router.get("/", authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
   try {
     const userId = req.user?._id; // Extract authenticated user ID
     if (!userId) {
