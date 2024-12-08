@@ -54,16 +54,7 @@ router.post("/login", async (req, res) => {
         const { name, email, phone, role, clerkId } = req.body;
         const user = await User.findOne({ clerkId });
         if (!user) {
-            // res.status(401).json({ message: "Invalid credentials" });
-            const newUser = new User({
-                name,
-                email,
-                phone,
-                role,
-                clerkId,
-            });
-
-            await newUser.save();
+            res.status(401).json({ message: "Invalid credentials" });
         }
 
         const accessToken = jwt.sign(
@@ -71,7 +62,7 @@ router.post("/login", async (req, res) => {
             JWT_SECRET
         );
 
-        res.json({ accessToken });
+        res.status(200).json({ accessToken });
     } catch (error) {
         res.status(500).json({ message: "Internal server error", error });
     }
