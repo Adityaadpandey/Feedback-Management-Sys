@@ -28,7 +28,8 @@ router.get("/form/:id",authenticate, async (req, res):Promise<any> => {
         }
     }
     catch (error) {
-        console.error(error);
+        // console.error(error);
+
         res.status(500).json({
             message: "Internal server error",
             error
