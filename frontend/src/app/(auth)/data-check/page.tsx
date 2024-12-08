@@ -3,50 +3,77 @@
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
 
 const UserInfoForm: React.FC = () => {
     const router = useRouter();
     const { user } = useUser(); // Clerk's user context
     const [step, setStep] = useState(1);
+    const [loader, setLoader] = useState(true);
     const [formData, setFormData] = useState({
         email: "",
         phone: "",
         name: "",
         clerkId: "",
     });
-    const [loader,setloader] = useState(true);
+    function sleep(ms = 0) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-    // Check if user is logged in and exists
+    // Update formData dynamically when user data changes
     useEffect(() => {
-    setloader(true);
+        sleep(5000);
+
+        if (user) {
+            setFormData((prevData) => ({
+                ...prevData,
+                email: user.primaryEmailAddress?.emailAddress || "",
+                phone: user.primaryPhoneNumber?.phoneNumber || "",
+                clerkId: user.id,
+                name: user.fullName || "",
+            }));
+        }
+    }, [user]);
+
+    // Check if user exists
+    useEffect(() => {
         const checkUserLogin = async () => {
             if (user) {
-                const email = user?.primaryEmailAddress?.emailAddress || "";
-                const phone = user?.primaryPhoneNumber?.phoneNumber || '';
-                const clerkId = user?.id;
-
-                // Prepare the data to send to the server
-                const data = { email, phone, clerkId };
+                const data = { clerkId: user.id };
 
                 try {
-                    const response = await axios.post("http://localhost:8080/v1/auth/login", data);
+                    const response = await axios.post(
+                        "http://localhost:8080/v1/auth/login",
+                        data
+                    );
                     if (response.status === 200) {
                         console.log("User already exists, logged in successfully.");
                         localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+
                         router.push("/"); // Redirect to home page
                     } else {
                         console.log("User doesn't exist, proceed to registration.");
+                        setLoader(false);
                     }
-                } catch (error) {
-                    console.error("Error during login check:", error);
-                    // Handle the error (e.g., user doesn't exist or login failed)
+                } catch {
+                    // console.error("Error during login check:", error);
+                    setLoader(false); // Stop loader on error
                 }
+                finally {
+
+
+                    setLoader(false); // Stop loader after checking user
+                }
+            } else {
+                setLoader(false); // Stop loader if no user found
             }
+
+
         };
 
-        checkUserLogin(); // Run on page load
+        checkUserLogin();
     }, [user, router]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,13 +90,11 @@ const UserInfoForm: React.FC = () => {
 
     const handleSubmit = async () => {
         try {
-            // If phone is an empty string, set it to null
-            if (formData.phone === "") {
-                formData.phone = null;
-            }
-
             // Register the user if they don't exist
-            const response = await axios.post("http://localhost:8080/v1/auth/register", formData);
+            const response = await axios.post(
+                "http://localhost:8080/v1/auth/register",
+                formData
+            );
             if (response.status === 200) {
                 console.log("User registered successfully.");
                 localStorage.setItem("user", JSON.stringify(response.data.accessToken));
@@ -156,9 +181,15 @@ const UserInfoForm: React.FC = () => {
                 <div>
                     <h2 className="text-lg font-semibold mb-4 dark:text-black">Review & Submit</h2>
                     <div className="mb-4">
-                        <p className="dark:text-black"><strong>Email:</strong> {formData.email}</p>
-                        <p className="dark:text-black"><strong>Phone:</strong> {formData.phone || "Not Provided"}</p>
-                        <p className="dark:text-black"><strong>Name:</strong> {formData.name}</p>
+                        <p className="dark:text-black">
+                            <strong>Email:</strong> {formData.email}
+                        </p>
+                        <p className="dark:text-black">
+                            <strong>Phone:</strong> {formData.phone || "Not Provided"}
+                        </p>
+                        <p className="dark:text-black">
+                            <strong>Name:</strong> {formData.name}
+                        </p>
                     </div>
                     <div className="flex justify-between">
                         <Button onClick={handleBack} variant="secondary">
