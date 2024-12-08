@@ -5,17 +5,18 @@ import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
 
   return (
-    <div className="fixed top-2 right-2">
+      <div className="fixed top-2 right-5 z-[99]">
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">
@@ -35,7 +36,8 @@ export function ModeToggle() {
             System
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+           <span className="absolute inset-x-0 w-8 mx-auto -bottom-px bg-gradient-to-r from-transparent via-purple-700 to-transparent h-[0.75px] mb-[2.75px]"/>
+          </DropdownMenu>
     </div>
   );
 }

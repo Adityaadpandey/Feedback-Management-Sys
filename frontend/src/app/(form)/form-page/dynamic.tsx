@@ -38,8 +38,8 @@ const DynamicForm = ({ formData }: { formData: any }) => {
     }
 
     return (
-        <div className="bg-gray-100 p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold text-center mb-4 text-black">{formData.title}</h1>
+        <div className="p-6 rounded-lg shadow-lg max-w-3xl mx-auto bg-dot-thick-transparent dark:">
+            <h1 className="text-2xl font-bold text-center mb-4 ">{formData.title}</h1>
             <p className="text-gray-700 text-center mb-6">{formData.description}</p>
 
             {/* Form Component */}
