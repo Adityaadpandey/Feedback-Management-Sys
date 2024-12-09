@@ -48,13 +48,13 @@ router.get("/form/:id",authenticate, async (req, res):Promise<any> => {
 
 
 // GET form titles for current user
-router.get("/titles", authenticate, async (req: RequestWithUser, res):Promise<void> => {
+router.get("/titles", authenticate, async (req: RequestWithUser, res):Promise<any> => {
     try {
       const userId = req.user?._id;
 
       // Validate userId
       if (!userId) {
-        res.status(400).json({ message: "Invalid user ID" });
+        return res.status(400).json({ message: "Invalid user ID" });
       }
 
       // Fetch form titles created by the user with optimized query
@@ -62,7 +62,7 @@ router.get("/titles", authenticate, async (req: RequestWithUser, res):Promise<vo
 
       // Return 404 if no forms are found
       if (!forms.length) {
-        res.status(404).json({ message: "No forms found" });
+        return res.status(404).json({ message: "No forms found" });
       }
 
       // Send the response immediately
