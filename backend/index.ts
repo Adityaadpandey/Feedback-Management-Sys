@@ -1,5 +1,7 @@
 import express from "express";
 import CORS from 'cors'
+import compression from "compression";
+
 // Routes
 import { admin } from "./routes/admin";
 import { analytics } from "./routes/analytics";
@@ -13,6 +15,7 @@ import {connectDB} from "./utils/db";
 
 const app = express();
 app.use(CORS())
+app.use(compression());
 app.use(express.json());
 connectDB();
 
