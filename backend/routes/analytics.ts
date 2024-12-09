@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import { authenticate } from "../middleware/authenticator";
 import Form from "../models/Form";
-import ResponseModel from "../models/Responses";
 
 // Define the type for authenticated user
 interface AuthenticatedUser {
@@ -18,35 +17,33 @@ const router = Router();
 // Analytics panel route
 router.get("/", authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
   try {
-    const userId = req.user?._id; // Extract authenticated user ID
+    const userId = req.user?._id;
     if (!userId) {
       return res.status(401).json({ message: "Authentication required" });
     }
 
-    // Fetch forms with response count using aggregation
+    // Aggregate forms with response counts
     const formsWithResponses = await Form.aggregate([
-      { $match: { createdBy: userId } }, // Match forms created by the user
+      {
+        $match: { createdBy: userId }, // Match forms created by the user
+      },
       {
         $lookup: {
-          from: "responses", // Collection name of the responses
-          localField: "_id",
-          foreignField: "formId",
+          from: "responses", // Collection name of responses
+          localField: "_id", // Join key in Form
+          foreignField: "formId", // Join key in Response
           as: "responses",
         },
       },
       {
-        $addFields: {
-          responseCount: { $size: "$responses" }, // Add response count
-        },
-      },
-      {
         $project: {
-          "responses.formId": 0, // Exclude unnecessary fields from responses
+          title: 1, // Include only necessary fields
+          responseCount: { $size: "$responses" }, // Add response count
         },
       },
     ]);
 
-    if (formsWithResponses.length === 0) {
+    if (!formsWithResponses.length) {
       return res.status(404).json({ message: "No forms found" });
     }
 
@@ -55,7 +52,7 @@ router.get("/", authenticate, async (req: RequestWithUser, res: Response): Promi
       data: formsWithResponses,
     });
   } catch (error: any) {
-    console.error("Error fetching analytics:", error.message);
+    console.error("Error fetching analytics:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
