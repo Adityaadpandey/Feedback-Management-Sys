@@ -43,7 +43,7 @@ const UserInfoForm: React.FC = () => {
 
                     if (response.status === 200) {
                         // User exists, store token and redirect
-                        localStorage.setItem("user", JSON.stringify(response.data.accessToken));
+                        localStorage.setItem("user", response.data.accessToken);
                         router.push("/dashboard");
                         return;
                     }
