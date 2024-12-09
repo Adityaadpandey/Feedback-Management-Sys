@@ -48,28 +48,33 @@ router.get("/form/:id",authenticate, async (req, res):Promise<any> => {
 
 
 // GET form titles for current user
-
-router.get("/titles", authenticate, async (req: RequestWithUser, res): Promise<any> => {
+router.get("/titles", authenticate, async (req: RequestWithUser, res):Promise<void> => {
     try {
-        const userId = req.user?._id;
-        if (!userId) {
-            return res.status(400).json({ message: "User ID is required" });
-        }
-        const forms = await Form.find({ createdBy: userId }).select("title _id");
+      const userId = req.user?._id;
 
-        if (!forms.length) {
-            return res.status(404).json({ message: "No forms found for this user" });
-        }
+      // Validate userId
+      if (!userId) {
+        res.status(400).json({ message: "Invalid user ID" });
+      }
 
-        res.status(200).json({ titles: forms });
+      // Fetch form titles created by the user with optimized query
+      const forms = await Form.find({ createdBy: userId }, "title _id").lean().exec();
+
+      // Return 404 if no forms are found
+      if (!forms.length) {
+        res.status(404).json({ message: "No forms found" });
+      }
+
+      // Send the response immediately
+      res.status(200).json({ titles: forms });
+
     } catch (error) {
-        console.error("Error fetching form titles:", error);
-        res.status(500).json({
-            message: "Internal server error",
-            error: error.message,
-        });
+      console.error("Error fetching form titles:", error.message);
+      res.status(500).json({
+        message: "Internal server error",
+        error: error.message,
+      });
     }
-});
-
+  });
 
 export const reports = router;
