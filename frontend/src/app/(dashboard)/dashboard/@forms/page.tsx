@@ -1,82 +1,82 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { FormTitle } from "@/types/form";
+import { Card } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { FileText, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const Page = () => {
-    const [forms, setForms] = useState([]); // Use an empty array as the default value for forms
-    const [loading, setLoading] = useState(true); // Track loading state
-    const [error, setError] = useState(null); // Track errors
+export default function FormsPage() {
+  const router = useRouter();
+  const [title_forms, setForms] = useState<FormTitle[]>([]); // Ensure it's initialized as an array.
 
-    useEffect(() => {
-        const fetchForms = async () => {
-            try {
-                const token = localStorage.getItem('user'); // Get the token from localStorage
-                if (!token) {
-                    throw new Error("No token found in localStorage.");
-                }
+  useEffect(() => {
+    const fetchForms = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/v1/reports/titles`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("user")}`,
+          },
+        });
 
-                const response = await axios.get('http://localhost:8080/v1/reports/titles', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                });
+        // Check if response data is an array, else handle appropriately.
+        // const forms = Array.isArray(response.data) ? response.data : [];
+        console.log("Forms:", response.data);
 
-                setForms(response.data.titles); // Assuming the API returns an object with a "titles" property
-            } catch (err) {
-                console.error("Error fetching forms:", err.message);
-                setError(err.message); // Set error state
-            } finally {
-                setLoading(false); // Stop loading after the fetch completes
-            }
-        };
+        setForms(response.data.titles);
+      } catch (error) {
+        console.error("Failed to fetch forms:", error);
+        setForms([]); // Set to an empty array on error to avoid further issues.
+      }
+    };
 
-        fetchForms();
-    }, []);
+    fetchForms();
+  }, []);
 
-    if (loading) return <h1>Loading...</h1>; // Display loading state
-    if (error) return <h1>Error: {error}</h1>; // Display error message if an error occurs
+  const handleViewResponses = (formId: string) => {
+    router.push(`/dashboard?formId=${formId}`);
+  };
 
-    return (
-        <div className="p-8 min-h-screen transition-colors duration-300  ">
-            <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-900 dark:text-gray-100">
-                Your Forms
-            </h1>
-            {forms.length > 0 ? (
-                <div className="space-y-6">
-                    {forms.map((form) => (
-                        <div
-                            key={form._id}
-                            className="flex items-center justify-between bg-white dark:bg-gray-800 shadow-md dark:shadow-lg rounded-lg p-6
-                     hover:shadow-lg dark:hover:shadow-xl transition-shadow duration-300"
-                        >
-                            <h2 className="text-2xl font-medium text-gray-800 dark:text-gray-200">
-                                {form.title}
-                            </h2>
-                            <Button
-                                className="w-28 text-blue-600 dark:text-blue-400
-                       hover:bg-blue-100 dark:hover:bg-gray-700
-                       hover:scale-105 dark:hover:scale-105
-                       transition-transform duration-200"
-                                variant="link"
-                            >
-                                View Form
-                            </Button>
-                        </div>
-                    ))}
+  return (
+    <Card className="h-[calc(100vh-2rem)] p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground">Forms</h2>
+        <p className="text-muted-foreground">View and manage your feedback forms</p>
+      </div>
+
+      <ScrollArea className="h-[calc(100%-5rem)] pr-4">
+        <div className="space-y-4">
+          {title_forms.length > 0 ? (
+            title_forms.map((form) => (
+              <Card key={form._id} className="p-4 hover:bg-accent/50 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <div>
+                      <h3 className="font-medium text-foreground">{form.title}</h3>
+                      <p className="text-sm text-muted-foreground">ID: {form._id}</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleViewResponses(form._id)}
+                    className="hover:bg-primary hover:text-primary-foreground"
+                  >
+                    View Responses
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
-            ) : (
-                <p className="text-center text-lg text-gray-600 dark:text-gray-300">
-                    No forms available. Please create one to get started!
-                </p>
-            )}
+              </Card>
+            ))
+          ) : (
+            <p className="text-muted-foreground">No forms available</p>
+          )}
         </div>
-
-
-
-
-    );
-};
-
-export default Page;
+      </ScrollArea>
+    </Card>
+  );
+}

@@ -1,26 +1,17 @@
-import React from 'react';
-
-
-export default function layout({
-    children,
-    forms,
-    responses,
-}: Readonly<{
-    children: React.ReactNode;
-    forms: React.ReactNode;
-    responses: React.ReactNode;
-}>) {
-    return (
-        <>
-               {children}
-            <div className='mt-32 h-fit flex flex-row justify-around'>
-                <div>
-                    {forms}
-                </div>
-                <div>
-                    {responses}
-                    </div>
-            </div>
-        </>
-    )
+export default function DashboardLayout({
+  forms,
+  responses,
+}: {
+  children: React.ReactNode;
+  forms: React.ReactNode;
+  responses: React.ReactNode;
+}) {
+  return (
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>{forms}</div>
+        <div>{responses}</div>
+      </div>
+    </div>
+  );
 }
