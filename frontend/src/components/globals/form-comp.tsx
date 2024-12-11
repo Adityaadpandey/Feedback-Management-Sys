@@ -122,7 +122,7 @@ const Form: React.FC<FormProps> = ({
                                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800">
+                            <PopoverContent className="w-auto p-0 bg-white ">
                                 <Calendar
                                     mode="single"
                                     selected={date}
@@ -139,7 +139,7 @@ const Form: React.FC<FormProps> = ({
                     {question.questionType === "checkbox" && (
                         <div className="mt-2 space-y-2">
                             {question.options?.map((option, i) => (
-                                <Label key={i} className="flex items-center space-x-2 text-black">
+                                <Label key={i} className="flex items-center space-x-2 ">
                                     <input
                                         type="checkbox"
                                         value={option}
@@ -274,7 +274,7 @@ const Form: React.FC<FormProps> = ({
 
             ))}
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" variant="outline">
                 {buttonText}
             </Button>
         </form>

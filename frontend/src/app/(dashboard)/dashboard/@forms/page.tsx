@@ -1,13 +1,13 @@
 "use client";
 
-import { FormTitle } from "@/types/form";
-import { Card } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { FileText, ArrowRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { FormTitle } from "@/types/form";
 import axios from "axios";
+import { ArrowRight, FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function FormsPage() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function FormsPage() {
 
         setForms(response.data.titles);
       } catch (error) {
-        console.error("Failed to fetch forms:", error);
+        console.log("Failed to fetch forms:", error);
         setForms([]); // Set to an empty array on error to avoid further issues.
       }
     };

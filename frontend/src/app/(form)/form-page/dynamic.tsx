@@ -1,6 +1,7 @@
 "use client";
 
 import Form, { FormQuestion } from "@/components/globals/form-comp";
+import { Card } from "@/components/ui/card";
 import axios from "axios";
 import { useState } from "react";
 
@@ -38,7 +39,8 @@ const DynamicForm = ({ formData }: { formData: any }) => {
     }
 
     return (
-        <div className="p-6 rounded-lg shadow-lg max-w-3xl mx-auto bg-dot-thick-transparent dark:">
+        <Card>
+            <div className="p-6 rounded-lg shadow-lg max-w-3xl mx-auto bg-dot-thick-transparent ">
             <h1 className="text-2xl font-bold text-center mb-4 ">{formData.title}</h1>
             <p className="text-gray-700 text-center mb-6">{formData.description}</p>
 
@@ -49,6 +51,7 @@ const DynamicForm = ({ formData }: { formData: any }) => {
                 buttonText="Submit Form"
             />
         </div>
+        </Card>
     );
 };
 
