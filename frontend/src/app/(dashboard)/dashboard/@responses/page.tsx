@@ -11,10 +11,12 @@ import axios from "axios";
 export default function ResponsesPage() {
   const searchParams = useSearchParams();
   const formId = searchParams.get("formId");
-  const [responses, setResponses] = useState([]);
+    const [responses, setResponses] = useState([]);
+    const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!formId) return;
+      if (!formId) return;
+    setLoading(true);
 
     const fetchResponses = async () => {
       try {
@@ -27,9 +29,10 @@ export default function ResponsesPage() {
           }
         );
           setResponses(response.data.responses);
-          console.log("Fetched responses:", response.data.responses);
+        //   setLoading(false);
+        //   console.log("Fetched responses:", response.data.responses);
       } catch (error) {
-        console.error("Failed to fetch responses:", error);
+        console.log("Failed to fetch responses:", error);
       }
     };
 
@@ -39,6 +42,13 @@ export default function ResponsesPage() {
   if (!formId) {
     return <NoResponseSelected />;
   }
+    if (loading){
+        return (
+            <div className="flex justify-center items-center ">
+                <h1 className="text-green-400 text-3xl">Loading..</h1>
+                </div>
+        )
+    }
 
   return (
     <Card className="h-[calc(100vh-2rem)] p-6">
