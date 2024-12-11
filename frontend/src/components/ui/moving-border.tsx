@@ -36,7 +36,7 @@ export const MovingBorder = ({
     <Component className={cn("relative", containerClassName)}>
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-r from-primary to-primary-foreground blur-xl transition-all duration-500",
+          "absolute inset-0 bg-gradient-to-r from-primary via-orange-300 to-primary-foreground blur-xl transition-all duration-500",
           className
         )}
         style={{

@@ -36,7 +36,7 @@ export function ModeToggle() {
             System
           </DropdownMenuItem>
         </DropdownMenuContent>
-           <span className="absolute inset-x-0 w-8 mx-auto -bottom-px bg-gradient-to-r from-transparent via-purple-700 to-transparent h-[0.75px] mb-[2.75px]"/>
+           <span className="absolute inset-x-0 w-8 mx-auto -bottom-px  bg-gradient-to-r from-primary via-orange-300 to-primary-foreground from-transparent  to-transparent h-[0.75px] mb-[2.75px]"/>
           </DropdownMenu>
     </div>
   );

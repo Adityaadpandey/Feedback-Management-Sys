@@ -12,7 +12,7 @@ export function GradientText({
   return (
     <span
       className={cn(
-        "bg-gradient-to-r from-primary via-purple-500 to-primary-foreground bg-clip-text text-transparent animate-gradient",
+        "bg-gradient-to-r from-primary via-orange-200 to-primary-foreground bg-clip-text text-transparent animate-gradient",
         className
       )}
     >

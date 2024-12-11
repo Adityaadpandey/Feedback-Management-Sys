@@ -42,7 +42,7 @@ export const FloatingNav = ({
 
             {/* Gradient Line Under Active Link */}
             {pathname === navItem.link && (
-              <span className="absolute inset-x-0 w-100 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
+              <span className="absolute inset-x-0 w-100 mx-auto -bottom-px bg-gradient-to-r from-primary via-orange-300 to-primary-foreground from-transparent  to-transparent h-px" />
             )}
           </Link>
         ))}
