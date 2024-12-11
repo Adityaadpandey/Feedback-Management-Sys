@@ -1,4 +1,4 @@
-import { Contact, Home } from "lucide-react";
+import {  LayoutDashboard, Home } from "lucide-react";
 import { FloatingNav } from "../ui/floating-navbar";
 
 const Navbar = () => {
@@ -11,9 +11,9 @@ const Navbar = () => {
           icon: <Home size={24} />,
         },
         {
-          name: "Contact",
-          link: "/contact",
-          icon: <Contact size={24} />,
+          name: "DashBoard",
+          link: "/dashboard",
+          icon: <LayoutDashboard size={24} />,
         },
       ]}
     />
