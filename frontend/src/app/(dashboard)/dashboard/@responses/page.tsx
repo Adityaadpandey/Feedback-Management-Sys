@@ -26,7 +26,8 @@ export default function ResponsesPage() {
             },
           }
         );
-        setResponses(response.data.responses);
+          setResponses(response.data.responses);
+          console.log("Fetched responses:", response.data.responses);
       } catch (error) {
         console.error("Failed to fetch responses:", error);
       }
