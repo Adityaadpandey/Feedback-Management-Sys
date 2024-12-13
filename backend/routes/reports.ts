@@ -125,4 +125,17 @@ router.get("/forms/:formId/export/json", authenticate, async (req: RequestWithUs
 })
 
 
+router.get("/forms/:formId/responses/count", authenticate, async (req: RequestWithUser, res): Promise<any> => {
+    try {
+        const { formId } = req.params;
+        const count = await ResponseModel.countDocuments
+            ({ formId });
+        res.json({ count });
+    } catch (error) {
+        console.error("Error counting responses:", error.message);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+}
+);
+
 export const reports = router;
