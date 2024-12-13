@@ -7,13 +7,6 @@ import ResponseModel from "../models/Responses";
 
 const router = Router();
 
-/**
- * Optimized high-performance form response submission
- * Key performance optimizations:
- * - Minimal validation
- * - Parallel processing
- * - Reduced database interactions
- */
 router.post(
   "/",
   optionalAuth,
@@ -44,7 +37,7 @@ router.post(
       if (!form) return res.status(404).json({ message: "Form not found" });
 
       // Optional: Rate limiting based on previous submissions
-      if (existingResponses >= 10) {
+      if (existingResponses >= 1000) {
         return res.status(429).json({ message: "Submission limit reached" });
       }
 

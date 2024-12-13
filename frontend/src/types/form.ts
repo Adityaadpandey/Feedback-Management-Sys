@@ -1,22 +1,42 @@
+export interface FormQuestion {
+  _id: string;
+  questionText: string;
+  questionType:
+    | "short-answer"
+    | "paragraph"
+    | "multiple-choice"
+    | "checkbox"
+    | "dropdown"
+    | "file-upload"
+    | "date"
+    | "time"
+    | "rating"
+    | "linear-scale"
+    | "matrix";
+  options?: string[];
+}
+
+
 export interface FormTitle {
+    _id: string;
+    title: string;
+  }
+
+export interface FormData {
   _id: string;
   title: string;
+  description: string;
+  questions: FormQuestion[];
 }
 
-export interface FormResponse {
-  _id: string;
-  formId: string;
-  submittedBy: null;
-  responses: {
-    questionId: string;
-    answer: string | string[];
-    _id: string;
-  }[];
-  submittedAt: string;
-  __v: number;
+export interface QuestionProps {
+  question: FormQuestion;
+  onChange: (id: string, value: any) => void;
+  value?: any;
 }
 
-export interface ResponseData {
-  responses: FormResponse[];
-  length: number;
+export interface FormProps {
+  questions: FormQuestion[];
+  onSubmit: (responses: Record<string, any>) => void;
+  buttonText?: string;
 }

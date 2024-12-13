@@ -57,4 +57,6 @@ router.get("/", authenticate, async (req: RequestWithUser, res: Response): Promi
   }
 });
 
+
+
 export const analytics = router;
