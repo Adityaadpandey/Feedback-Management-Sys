@@ -2,6 +2,7 @@ import { Request, Router } from "express";
 import { authenticate } from "../middleware/authenticator";
 import Form from "../models/Form";
 import ResponseModel from "../models/Responses";
+import Users from "../models/Users";
 
 const router = Router();
 
@@ -105,6 +106,38 @@ router.get("/forms/:formId/export/csv", authenticate, async (req: RequestWithUse
 }
 );
 
+router.get("/forms/:formId/users", authenticate, async (req: RequestWithUser, res): Promise<any> => {
+    try {
+        const { formId } = req.params;
+        const form = await Form.findById(formId);
+        if (!form) {
+            return res.status(404).json({ message: "Form not found" });
+        }
+        const responses = await ResponseModel.find({ formId }).lean().exec();
+        if (!responses.length) {
+            return res.status(404).json({ message: "No responses found" });
+        }
+        // Extract user IDs from responses
+        const userIds = responses.map((response) => response.submittedBy);
+        // Fetch user names by user IDs
+        const users = await Users.find({ _id: { $in: userIds } }, "name email").lean().exec();
+        if (!users.length) {
+            return res.status(404).json({ message: "No users found" });
+        }
+        // Prepare JSON data
+
+        if (!users.length) {
+            return res.status(404).json({ message: "No users found" });
+        }
+        // Prepare JSON data
+        res.json(users);
+    } catch (error) {
+        console.error("Error fetching users:", error.message);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+});
+
+
 router.get("/forms/:formId/export/json", authenticate, async (req: RequestWithUser, res): Promise<any> => {
     try {
         const { formId } = req.params;
@@ -137,5 +170,7 @@ router.get("/forms/:formId/responses/count", authenticate, async (req: RequestWi
     }
 }
 );
+
+
 
 export const reports = router;
