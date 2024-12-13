@@ -79,6 +79,7 @@ router.get("/titles", authenticate, async (req: RequestWithUser, res): Promise<a
 });
 
 
+// Get the CSV file for the form
 router.get("/forms/:formId/export/csv", authenticate, async (req: RequestWithUser, res): Promise<any> => {
     try {
         const { formId } = req.params;
@@ -106,6 +107,8 @@ router.get("/forms/:formId/export/csv", authenticate, async (req: RequestWithUse
 }
 );
 
+
+// GET all looged users from the form
 router.get("/forms/:formId/users", authenticate, async (req: RequestWithUser, res): Promise<any> => {
     try {
         const { formId } = req.params;
@@ -138,6 +141,7 @@ router.get("/forms/:formId/users", authenticate, async (req: RequestWithUser, re
 });
 
 
+// Get the JSON file for the form
 router.get("/forms/:formId/export/json", authenticate, async (req: RequestWithUser, res): Promise<any> => {
     try {
         const { formId } = req.params;
