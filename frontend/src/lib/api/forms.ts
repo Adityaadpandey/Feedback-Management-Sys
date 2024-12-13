@@ -51,7 +51,7 @@ export async function submitFormResponse(payload: FormResponse): Promise<any> {
         "Failed to submit form response"
       );
     }
-
+    // console.log(response)
     return response.json();
   } catch (error) {
     if (error instanceof ApiError) {
