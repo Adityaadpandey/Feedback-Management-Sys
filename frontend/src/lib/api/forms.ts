@@ -1,4 +1,4 @@
-import { FormData, FormResponse } from "@/types/form";
+import { FormData } from "@/types/form";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
 
