@@ -2,15 +2,15 @@
 
 import { NoResponseSelected } from "@/components/dashboard/no-response-selected";
 import { ResponseList } from "@/components/dashboard/response-list";
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { ClipLoader } from 'react-spinners';
+import { Suspense, useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 
-export default function ResponsesPage() {
+function ResponsesPageContent() {
     const searchParams = useSearchParams();
     const formId = searchParams.get("formId");
     const [responses, setResponses] = useState([]);
@@ -44,31 +44,28 @@ export default function ResponsesPage() {
     if (!formId) {
         return <NoResponseSelected />;
     }
+
     if (loading) {
         return (
-            <div className="flex justify-center items-center ">
+            <div className="flex justify-center items-center h-full">
                 <ClipLoader />
-                {/* <h1 className="text-green-400 text-3xl">Loading..</h1> */}
-                {/* <Spinner /> */}
-
-
             </div>
-        )
+        );
     }
 
     return (
-        <>
-         <Card className="h-[calc(100vh-2rem)] p-6">
-
+        <Card className="h-[calc(100vh-2rem)] p-6">
             <div className="mb-6 flex justify-between">
                 <div>
                     <h2 className="text-2xl font-bold text-foreground">Responses</h2>
-                <p className="text-muted-foreground">
-                    {responses.length} responses received
-                </p>
+                    <p className="text-muted-foreground">
+                        {responses.length} responses received
+                    </p>
                 </div>
-                    <div>
-                        <Button variant="link" className="hover:from-white to-purple-300">Get More</Button>
+                <div>
+                    <Button variant="link" className="hover:from-white to-purple-300">
+                        Get More
+                    </Button>
                 </div>
             </div>
 
@@ -76,6 +73,19 @@ export default function ResponsesPage() {
                 <ResponseList responses={responses} />
             </ScrollArea>
         </Card>
-        </>
+    );
+}
+
+export default function ResponsesPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="flex justify-center items-center h-screen">
+                    <ClipLoader />
+                </div>
+            }
+        >
+            <ResponsesPageContent />
+        </Suspense>
     );
 }

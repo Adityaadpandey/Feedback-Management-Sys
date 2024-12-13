@@ -16,6 +16,12 @@ export interface FormQuestion {
   options?: string[];
 }
 
+
+export interface FormTitle {
+    _id: string;
+    title: string;
+  }
+
 export interface FormData {
   _id: string;
   title: string;

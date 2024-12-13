@@ -10,7 +10,11 @@
     "skipLibCheck": true,
     "strict": false,
     "noImplicitAny": false, // Allow implicit any type
+    "noImplicitThis": false, // Allow implicit this type
+    "noUnusedLocals": true, // Enable check for unused local variables
+    "noUnusedParameters": true, // Enable check for unused parameters
     "exactOptionalPropertyTypes": false, // Ensures looser checks for optional properties
+    "noImplicitUseStrict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
