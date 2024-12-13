@@ -7,13 +7,6 @@ import ResponseModel from "../models/Responses";
 
 const router = Router();
 
-/**
- * Optimized high-performance form response submission
- * Key performance optimizations:
- * - Minimal validation
- * - Parallel processing
- * - Reduced database interactions
- */
 router.post(
   "/",
   optionalAuth,
