@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -94,7 +95,9 @@ const UserInfoForm: React.FC = () => {
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+                {/* <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div> */}
+
+                <LoadingSpinner/>
             </div>
         );
     }
