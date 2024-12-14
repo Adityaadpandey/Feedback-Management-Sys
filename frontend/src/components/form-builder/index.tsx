@@ -1,16 +1,17 @@
 "use client";
 
+import { FormQuestion } from "@/types/form";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
+import { GradientText } from "../ui/gradient-text";
+import { Input } from "../ui/input";
 import { QuestionList } from "./question-list";
 import { Toolbox } from "./toolbox";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { FormQuestion } from "@/types/form";
-import { useRouter } from "next/navigation";
 
 interface DragQuestion extends FormQuestion {
     _id: string;
@@ -91,11 +92,11 @@ export function FormBuilder() {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-            >
+                className="space-y-6">
+
                 <Card className="p-6">
-                    <h1 className="text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
-                        Form Builder
+                    <h1 className="text-2xl font-bold max-w-4xl mb-2 leading-tight">
+                        <GradientText>Make Your Form</GradientText>
                     </h1>
 
                     <Input

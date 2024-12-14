@@ -55,7 +55,7 @@ function ResponsesPageContent() {
     }
 
     return (
-        <Card className="h-[calc(100vh-2rem)] p-6">
+        <Card className="h-[calc(100vh-8rem)] p-6">
             <div className="mb-6 flex justify-between">
                 <div>
                     <h2 className="text-2xl font-bold text-foreground">Responses</h2>
