@@ -33,7 +33,7 @@ const formSchema = new mongoose.Schema({
   },
   isPublic: {
     type: Boolean,
-    default: false
+    default: true
   }, // Public or restricted access
   responseLimit: {
     type: Number,
