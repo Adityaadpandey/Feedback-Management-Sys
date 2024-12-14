@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams,useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 function ResponsesPageContent() {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const formId = searchParams.get("formId");
     const [responses, setResponses] = useState([]);
@@ -63,7 +64,10 @@ function ResponsesPageContent() {
                     </p>
                 </div>
                 <div>
-                    <Button variant="link" className="hover:from-white to-purple-300">
+                    <Button
+                        variant="link"
+                        onClick={() => router.push("analytics")}
+                        className="hover:from-white to-purple-300">
                         Get More
                     </Button>
                 </div>
