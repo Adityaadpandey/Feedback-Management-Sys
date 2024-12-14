@@ -41,7 +41,7 @@ export default function FormsPage() {
   };
 
   return (
-    <Card className="h-[calc(100vh-2rem)] p-6">
+    <Card className="h-[calc(100vh-8rem)] p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-foreground">Forms</h2>
         <p className="text-muted-foreground">View and manage your feedback forms</p>
