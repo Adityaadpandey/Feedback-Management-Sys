@@ -35,28 +35,39 @@ export async function getFormBySlug(slug: string): Promise<FormData> {
   }
 }
 
-export async function submitFormResponse(payload: FormResponse): Promise<any> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/responses`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+export async function submitFormResponse(payload: any): Promise<any> {
+    try {
+      // Get 'user' from localStorage
+      const user = localStorage.getItem("user");
 
-    if (!response.ok) {
-      throw new ApiError(
-        response.status,
-        "Failed to submit form response"
-      );
+      // Prepare headers
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+        // Add authorization header if 'user' exists
+      if (user) {
+        headers["Authorization"] = `Bearer ${user}`;
+      }
+
+      // Make the API request
+      const response = await fetch(`${API_BASE_URL}/responses`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      });
+
+      // Check if the response is not OK
+      if (!response.ok) {
+        throw new ApiError(response.status, "Failed to submit form response");
+      }
+
+      // Return the parsed JSON response
+      return response.json();
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      throw new Error("Network error occurred while submitting form");
     }
-    // console.log(response)
-    return response.json();
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error;
-    }
-    throw new Error("Network error occurred while submitting form");
   }
-}
