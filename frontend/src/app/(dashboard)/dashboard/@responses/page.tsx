@@ -67,7 +67,7 @@ function ResponsesPageContent() {
                     <Button
                         variant="link"
                         onClick={() => router.push("analytics")}
-                        className="hover:from-white to-purple-300">
+                        >
                         Get More
                     </Button>
                 </div>
