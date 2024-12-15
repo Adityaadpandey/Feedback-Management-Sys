@@ -78,9 +78,12 @@ export function FormBuilder() {
             if (!response.ok) throw new Error("Failed to create form");
 
             // toast.success("Form created successfully!");
+            const data = await response.json();
+            console.log(data);
+
             setTitle("");
             setQuestions([]);
-            router.push("/form-succesfully-created")
+            router.push(`/success/${data.form._id}`);
         } catch (error) {
             toast.error("Failed to create form");
             console.error(error);
