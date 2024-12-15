@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "yarn tsc",
+    "dev": "nodemon index.js --exec ts-node"
+  },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/dotenv": "^8.2.3",

@@ -14,7 +14,7 @@ RUN yarn install
 COPY . .
 
 # Compile TypeScript to JavaScript
-RUN yarn build
+RUN yarn tsc
 
 # Stage 2: Production
 FROM node:22.12.0-alpine3.21 AS runner
@@ -24,7 +24,7 @@ WORKDIR /app
 
 # Install only production dependencies
 COPY package.json yarn.lock ./
-RUN yarn install --production
+RUN yarn install
 
 # Copy the compiled JavaScript files from the builder stage
 COPY --from=builder /app/dist ./dist
@@ -33,10 +33,10 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package.json /app/yarn.lock ./
 
 # Expose the port your app will run on
-EXPOSE 3000
+EXPOSE 8080
 
 # Set the environment variable for production
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 
 # Command to start the application
 CMD ["node", "dist/index.js"]
