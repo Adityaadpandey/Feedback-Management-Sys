@@ -1,2 +1,10 @@
 TODO: if the user is there then show there name -> response-list.tsx
 {/* <p>{response.submittedBy}</p> */}
+
+
+TODO: AI integration in form builder using Gemini
+
+
+TODO: Analytics of the form -> Analytics/page.tsx
+
+
