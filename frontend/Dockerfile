@@ -1,41 +1,35 @@
-FROM node:22.12.0-alpine3.21 AS builder
+# Stage 1: Builder
+FROM oven/bun:canary-alpine AS builder
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json ./
+# Copy package.json, bun.lockb, and other files
+COPY package.json bun.lockb ./
+COPY .env ./
 
-# Install dependencies
-RUN npm install
+RUN bun install
 
-# Copy the rest of the application code
 COPY . .
 
-# Build the application
-RUN npm run build
+RUN bun run build
 
 # Stage 2: Production
-FROM node:22.12.0-alpine3.21 AS runner
+FROM oven/bun:canary-alpine AS runner
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Install only production dependencies
-COPY package.json package-lock.json ./
-RUN npm install --production
-
-# Copy the built application from the build stage
+# Copy only necessary files
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.env ./.env
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/bun.lockb ./bun.lockb
 
-# Expose the port the app runs on
+# Optional: Copy next.config.js if it exists
+
 EXPOSE 3000
 
-# Set environment variables
 ENV NODE_ENV=production
 
-# Start the application
-CMD ["npm", "run", "start"]
+CMD ["bun", "start"]
