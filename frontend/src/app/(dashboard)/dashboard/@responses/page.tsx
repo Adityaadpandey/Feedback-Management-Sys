@@ -54,29 +54,34 @@ function ResponsesPageContent() {
         );
     }
 
-    return (
-        <Card className="h-[calc(100vh-8rem)] p-6">
-            <div className="mb-6 flex justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-foreground">Responses</h2>
-                    <p className="text-muted-foreground">
-                        {responses.length} responses received
-                    </p>
-                </div>
-                <div>
-                    <Button
-                        variant="link"
-                        onClick={() => router.push("analytics")}
-                        >
-                        Get More
-                    </Button>
-                </div>
-            </div>
 
-            <ScrollArea className="h-[calc(100%-5rem)] pr-4">
-                <ResponseList responses={responses} />
-            </ScrollArea>
-        </Card>
+    return (
+        responses.length > 0 ? (
+            <Card className="h-[calc(100vh-8rem)] p-6">
+                <div className="mb-6 flex justify-between">
+                    <div>
+                        <h2 className="text-2xl font-bold text-foreground">Responses</h2>
+                        <p className="text-muted-foreground">
+                            {responses.length} responses received
+                        </p>
+                    </div>
+                    <div>
+                        <Button
+                            variant="link"
+                            onClick={() => router.push("analytics")}
+                        >
+                            Get More
+                        </Button>
+                    </div>
+                </div>
+
+                <ScrollArea className="h-[calc(100%-5rem)] pr-4">
+                    <ResponseList responses={responses} />
+                </ScrollArea>
+            </Card>
+        ) : (
+            <NoResponseSelected />
+        )
     );
 }
 

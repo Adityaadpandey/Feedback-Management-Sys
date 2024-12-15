@@ -27,11 +27,8 @@ export function DynamicForm({ formData }: DynamicFormProps) {
 
         try {
             await submitFormResponse(payload);
-            // alert('payload');
-            router.push("/")
-            //   toast.success("Form submitted successfully!");
+            router.push(`/form/success`);
         } catch {
-            //   console.error("Error submitting form:", error);
             toast.error("Failed to submit the form");
         }
     };

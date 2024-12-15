@@ -20,6 +20,7 @@ interface DragQuestion extends FormQuestion {
 export function FormBuilder() {
     const router = useRouter()
     const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [questions, setQuestions] = useState<DragQuestion[]>([]);
 
     const handleDragEnd = (result: DropResult) => {
@@ -71,6 +72,7 @@ export function FormBuilder() {
                 },
                 body: JSON.stringify({
                     title,
+                    description,
                     questions: questions.map(({ _id, ...q }) => q)
                 })
             });
@@ -107,6 +109,13 @@ export function FormBuilder() {
                         placeholder="Form Title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
+                        className="mb-6"
+                    />
+                    <Input
+                        type="description"
+                        placeholder="Form Description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
                         className="mb-6"
                     />
 
