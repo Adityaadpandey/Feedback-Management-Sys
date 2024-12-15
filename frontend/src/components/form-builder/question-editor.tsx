@@ -27,7 +27,7 @@ export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }
         <div {...dragHandleProps} className="cursor-move">
           <Grip className="h-5 w-5 text-muted-foreground" />
         </div>
-        
+
         <Input
           value={question.questionText}
           onChange={(e) => onUpdate({ questionText: e.target.value })}
@@ -79,10 +79,10 @@ export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }
   );
 }
 
-function QuestionOptionsEditor({ 
-  question, 
-  onUpdate 
-}: { 
+function QuestionOptionsEditor({
+  question,
+  onUpdate
+}: {
   question: FormQuestion;
   onUpdate: (updates: Partial<FormQuestion>) => void;
 }) {
@@ -91,7 +91,7 @@ function QuestionOptionsEditor({
   }
 
   const handleAddOption = () => {
-    const options = [...(question.options || []), "New Option"];
+    const options = [...(question.options || []), ""];
     onUpdate({ options });
   };
 
@@ -129,7 +129,7 @@ function QuestionOptionsEditor({
           </Button>
         </motion.div>
       ))}
-      
+
       <Button
         variant="outline"
         size="sm"

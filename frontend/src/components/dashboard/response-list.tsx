@@ -22,7 +22,9 @@ export function ResponseList({ responses }: ResponseListProps) {
               <div className="mb-2 flex items-center justify-between">
                 <p className="text-sm font-medium text-foreground">
                   Response #{response._id.slice(-4)}
-                </p>
+                          </p>
+                          {/* TODO: if the user is there then show there name */}
+                          {/* <p>{response.submittedBy}</p> */}
                 <time className="text-sm text-muted-foreground">
                   {formatDistanceToNow(new Date(response.submittedAt), {
                     addSuffix: true,
