@@ -42,9 +42,16 @@ export default function FormsPage() {
 
   return (
     <Card className="h-[calc(100vh-8rem)] p-6">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground">Forms</h2>
+      <div className="mb-6 flex justify-between">
+              <div>
+                   <h2 className="text-2xl font-bold text-foreground">Forms</h2>
         <p className="text-muted-foreground">View and manage your feedback forms</p>
+              </div>
+              <div className="">
+                  <Button variant="link" size="sm" onClick={() => router.push("/form-builder")}>
+                      Create New Form
+                    </Button>
+              </div>
       </div>
 
       <ScrollArea className="h-[calc(100%-5rem)] pr-4">
