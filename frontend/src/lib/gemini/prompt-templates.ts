@@ -5,12 +5,10 @@ Create a form based on the following description. Only use these question types:
 - multiple-choice
 - checkbox
 - dropdown
-- file-upload
 - date
 - time
 - rating
 - linear-scale
-- matrix
 
 For matrix questions, return options as an array of strings representing the rows.
 The columns will always be ["Yes", "No"].
