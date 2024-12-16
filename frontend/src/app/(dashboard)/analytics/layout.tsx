@@ -1,13 +1,17 @@
+"use client";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ReactNode } from "react";
 
-export default function Analytics_layout({
-   children
-}: {
-    children: React.ReactNode;
-}) {
-    return (
-        <>
-           {children}
-        </>
-    );
+const queryClient = new QueryClient();
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      {/* Optional: Add devtools for debugging */}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
 }
