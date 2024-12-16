@@ -40,3 +40,18 @@ export interface FormProps {
   onSubmit: (responses: Record<string, any>) => void;
   buttonText?: string;
 }
+
+export interface FormResponse{
+    _id: string;
+    submittedAt: string;
+    submittedBy: {
+        user_name: string;
+        user_id: string;
+    };
+    responses: {
+        _id: string;
+        questionId: string;
+        answer: any;
+    }[];
+
+}
