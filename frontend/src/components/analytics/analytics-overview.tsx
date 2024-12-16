@@ -7,7 +7,7 @@ export function AnalyticsOverview({ analytics }: { analytics: any }) {
   const stats = [
     {
       label: "Total Responses",
-      value: analytics.length,
+      value: analytics.totalResponses,
       icon: Users,
       description: "Total number of form submissions",
     },
@@ -19,7 +19,7 @@ export function AnalyticsOverview({ analytics }: { analytics: any }) {
     },
     {
       label: "Response Rate",
-      value: "100%",
+      value: analytics.responseRate,
       icon: BarChart,
       description: "Form completion rate",
     },

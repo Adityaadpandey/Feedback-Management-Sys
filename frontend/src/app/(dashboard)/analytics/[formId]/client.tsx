@@ -56,7 +56,7 @@ export function AnalyticsClient({ formId }: { formId: string }) {
                 <div className="grid gap-8">
 
                     {/* TODO add the no of responses */}
-                    <AnalyticsOverview analytics={data} />
+                    <AnalyticsOverview analytics={data.information} />
                     <ResponsesTimeline responses={data.responses} />
                     <QuestionAnalytics
                         questions={data.form.questions}

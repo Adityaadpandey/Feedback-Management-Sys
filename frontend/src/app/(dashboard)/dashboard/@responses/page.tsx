@@ -68,7 +68,7 @@ function ResponsesPageContent() {
                     <div>
                         <Button
                             variant="link"
-                            onClick={() => router.push("analytics")}
+                            onClick={() => router.push(`analytics/${formId}`)}
                         >
                             Get More
                         </Button>
