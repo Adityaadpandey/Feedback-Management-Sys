@@ -6,11 +6,19 @@ const responseSchema = new mongoose.Schema({
     ref: "Form",
     required: true,
   },
-  submittedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null, // Allows anonymous submissions
-  },
+    submittedBy: {
+      user_name: {
+        type: String,
+        ref: "User",
+        default: null, // Allows anonymous submissions
+      },
+      user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null, // Allows anonymous submissions
+      }
+    },
+
   responses: [
     {
       questionId: {

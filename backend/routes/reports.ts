@@ -109,36 +109,58 @@ router.get("/forms/:formId/export/csv", authenticate, async (req: RequestWithUse
 
 
 // GET all looged users from the form
-router.get("/forms/:formId/users", authenticate, async (req: RequestWithUser, res): Promise<any> => {
-    try {
+router.get(
+    "/forms/:formId/users",
+    authenticate,
+    async (req: RequestWithUser, res): Promise<any> => {
+      try {
         const { formId } = req.params;
+
+        // Check if the form exists
         const form = await Form.findById(formId);
         if (!form) {
-            return res.status(404).json({ message: "Form not found" });
+          return res.status(404).json({ message: "Form not found" });
         }
-        const responses = await ResponseModel.find({ formId }).lean().exec();
+
+        // Fetch all responses for the form
+        const responses = await ResponseModel.find({ formId })
+          .lean()
+          .exec();
         if (!responses.length) {
-            return res.status(404).json({ message: "No responses found" });
+          return res.status(404).json({ message: "No responses found" });
         }
-        // Extract user IDs from responses
-        const userIds = responses.map((response) => response.submittedBy);
-        // Fetch user names by user IDs
-        const users = await Users.find({ _id: { $in: userIds } }, "name email").lean().exec();
-        if (!users.length) {
-            return res.status(404).json({ message: "No users found" });
+
+        // Extract `user_id` from `submittedBy` for authenticated submissions
+        const userIds = responses
+          .map((response) => response.submittedBy?.user_id)
+          .filter((id) => id); // Filter out null/undefined values
+
+        if (!userIds.length) {
+          return res
+            .status(404)
+            .json({ message: "No authenticated users found in responses" });
         }
-        // Prepare JSON data
+
+        // Fetch user details
+        const users = await Users.find({ _id: { $in: userIds } }, "name email")
+          .lean()
+          .exec();
 
         if (!users.length) {
-            return res.status(404).json({ message: "No users found" });
+          return res.status(404).json({ message: "No users found" });
         }
-        // Prepare JSON data
+
+        // Respond with user details
         res.json(users);
-    } catch (error) {
+      } catch (error) {
         console.error("Error fetching users:", error.message);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res
+          .status(500)
+          .json({ message: "Internal server error", error: error.message });
+      }
     }
-});
+  );
+
 
 
 // Get the JSON file for the form

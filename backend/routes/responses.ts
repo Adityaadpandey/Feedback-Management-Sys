@@ -24,13 +24,19 @@ router.post(
     }
 
     const { formId, responses } = req.body;
-    const userId = req.user?._id || null;
+      const user_name = req.user?.name || null;
+        const user_id = req.user?._id || null;
 
     try {
       // Parallel database checks
       const [form, existingResponses] = await Promise.all([
         FormModel.findById(formId).select('questions').lean(),
-        ResponseModel.countDocuments({ formId, submittedBy: userId })
+          ResponseModel.countDocuments({
+              formId,
+              submittedBy: {
+                user_name,
+                  user_id
+              }})
       ]);
 
       // Quick rejections
@@ -57,7 +63,10 @@ router.post(
       // Bulk write for faster insertion
       const newResponse = new ResponseModel({
         formId: new mongoose.Types.ObjectId(formId),
-        submittedBy: userId,
+        submittedBy: {
+            user_name,
+              user_id
+          },
         responses,
         createdAt: new Date() // Explicitly set to reduce overhead
       });

@@ -19,7 +19,7 @@ router.post("/register", async (req, res) => {
             res.status(400).json({ message: "Email is already registered" });
             return;
         }
-        const hashedclerkId = await bcrypt.hash(clerkId, 10);
+        // const hashedclerkId = await bcrypt.hash(clerkId, 10);
 
         const newUser = new User({
             name,
@@ -35,7 +35,11 @@ router.post("/register", async (req, res) => {
 
         // res.status(201).json({ message: "User registered successfully" });
         const accessToken = jwt.sign(
-            { clerkId: user.clerkId, role: user.role },
+            {
+                clerkId: user.clerkId,
+                role: user.role,
+                name: user.name,
+             },
             JWT_SECRET
         );
 
@@ -58,7 +62,11 @@ router.post("/login", async (req, res) => {
         }
 
         const accessToken = jwt.sign(
-            { clerkId: user.clerkId, role: user.role },
+            {
+                clerkId: user.clerkId,
+                role: user.role,
+                name: user.name,
+             },
             JWT_SECRET
         );
 

@@ -44,7 +44,7 @@ router.post(
 
     try {
       // Use the authenticated user's ID
-      const { _id: userId } = req.user;   // from authenticate middleware
+      const { _id: userId } = req.user._id;   // from authenticate middleware
 
       const {
         title,
