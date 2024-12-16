@@ -30,7 +30,10 @@ export function ResponseList({ responses }: ResponseListProps) {
                                     })}
                                 </time>
                             </div>
-                           
+                            {/* userName */}
+                                {response.submittedBy?.user_name ? (
+                                    <p className="text-xs left-0 mb-2 font-medium text-foreground">user name : <span className="text-primary">{response.submittedBy.user_name}</span></p>
+                                ) : null}
                             <div className="space-y-2">
                                 {response.responses.map((item) => (
                                     <div key={item._id} className="rounded-md bg-accent/50 p-3">
