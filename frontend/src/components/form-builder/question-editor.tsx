@@ -22,7 +22,7 @@ export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }
   const [showPreview, setShowPreview] = useState(false);
 
   const handleAddOption = () => {
-    const options = [...(question.options || []), question.questionType === "matrix" ? "New Row" : "New Option"];
+    const options = [...(question.options || []), question.questionType === "matrix" ? "" : ""];
     onUpdate({ options });
   };
 
@@ -43,7 +43,7 @@ export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }
         <div {...dragHandleProps} className="cursor-move">
           <Grip className="h-5 w-5 text-muted-foreground" />
         </div>
-        
+
         <Input
           value={question.questionText}
           onChange={(e) => onUpdate({ questionText: e.target.value })}
