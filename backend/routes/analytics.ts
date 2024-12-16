@@ -85,13 +85,17 @@ router.get('/formresponse/:id', authenticate,  async (req: RequestWithUser, res:
                 message: "No responses found"
             });
         }
-        
+
 
         res.status(200).json({
             message: "Form analytics fetched successfully",
             form: form_data,
             responses: responses,
-            length: responses.length
+            information: {
+                totalResponses: responses.length,
+                lastResponseAt: responses[responses.length - 1].submittedAt,
+                responseRate: "100%"
+            }
         });
     } catch (error: any) {
         console.error("Error fetching form analytics:", error);
