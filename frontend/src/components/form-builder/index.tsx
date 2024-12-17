@@ -12,6 +12,7 @@ import { Textarea } from "../ui/textarea";
 import { toast } from "sonner";
 import { FormQuestion } from "@/types/form";
 import { useRouter } from "next/navigation";
+import { GradientText } from "../ui/gradient-text";
 
 interface DragQuestion extends FormQuestion {
   _id: string;
@@ -111,9 +112,9 @@ export function FormBuilder() {
   return (
     <div className="container mx-auto p-4 max-w-4xl">
       <Card className="p-6">
-        <h1 className="text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
-          Form Builder
-        </h1>
+       <h1 className="text-2xl font-bold max-w-4xl my-8 leading-tight">
+                <GradientText>Make Your Own Form</GradientText>
+            </h1>
 
         <AIFormGenerator
           onFormGenerated={handleFormGenerated}
