@@ -41,7 +41,7 @@ export function QuestionAnalytics({ questions, responses }: QuestionAnalyticsPro
                 {avgRating.toFixed(1)}
               </div>
               <div className="text-sm text-muted-foreground">
-                Average rating out of {question.questionType === "rating" ? "5" : "0"}
+                Average rating out of {question.questionType === "rating" ? "5" : "10"}
               </div>
             </div>
             <BarChart

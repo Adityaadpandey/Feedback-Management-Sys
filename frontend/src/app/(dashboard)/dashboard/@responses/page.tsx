@@ -5,10 +5,10 @@ import { ResponseList } from "@/components/dashboard/response-list";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import axios from "axios";
 import { useSearchParams,useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
+import {fetchResponsesForForm} from "@/lib/api/dashboard";
 
 function ResponsesPageContent() {
     const router = useRouter();
@@ -23,15 +23,8 @@ function ResponsesPageContent() {
 
         const fetchResponses = async () => {
             try {
-                const response = await axios.get(
-                    `http://localhost:8080/v1/reports/form/${formId}`,
-                    {
-                        headers: {
-                            authorization: `Bearer ${localStorage.getItem("user")}`,
-                        },
-                    }
-                );
-                setResponses(response.data.responses);
+                const response = await fetchResponsesForForm(formId);
+                setResponses(response);
                 setLoading(false);
             } catch (error) {
                 console.log("Failed to fetch responses:", error);
