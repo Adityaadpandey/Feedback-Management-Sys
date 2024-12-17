@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchFormsForDashboard } from "@/lib/api/dashboard";
 import { FormTitle } from "@/types/form";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText, PlusCircleIcon, PlusSquareIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -40,7 +40,9 @@ export default function FormsPage() {
                 </div>
                 <div className="">
                     <Button variant="link" size="sm" onClick={() => router.push("/form-builder")}>
-                        Create New Form
+                        {/* TODO */}
+                        <PlusCircleIcon className="h-24 w-24" />
+                        <span>Create new Form</span>
                     </Button>
                 </div>
             </div>
