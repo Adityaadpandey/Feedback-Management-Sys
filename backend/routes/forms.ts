@@ -154,4 +154,34 @@ router.put('/update/:id', authenticate, async (req:any, res):Promise<any> => {
 );
 
 
+// Delete form by ID
+router.delete('/delete/:id', authenticate, async (req:any, res):Promise<any> => {
+    try {
+        const { id } = req.params;
+        const form = await Form.findById(id)
+        const { _id: userId } = req.user;  // from authenticate middleware
+        // Check if form exists
+        if (!form) {
+            return res.status(404).json({
+                message: "Form not found"
+            });
+        }
+        // Check if the user is the creator of the form
+        if (form.createdBy.toString()!== userId.toString()) {
+            return res.status(403).json({
+                message: "You are not authorized to delete this form"
+            });
+        }
+        // Delete the form
+        await Form.findByIdAndDelete(id);
+        res.json({ message: "Form deleted successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Internal server error",
+            error
+        });
+    }
+});
+
 export const form = router;
