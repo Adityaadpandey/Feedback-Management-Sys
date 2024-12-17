@@ -1,6 +1,8 @@
 import express from "express";
 import CORS from 'cors'
 import compression from "compression";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Routes
 import { admin } from "./routes/admin";

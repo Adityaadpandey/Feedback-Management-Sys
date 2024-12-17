@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import User from "../models/Users"; // Import your User model
-import { JWT_SECRET } from "../routes/auth"; // Import your JWT secret
+// import { JWT_SECRET } from "../routes/auth"; // Import your JWT secret
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 interface User {
   clerkId: string;

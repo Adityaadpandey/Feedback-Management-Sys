@@ -3,10 +3,9 @@ import { Router } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/Users";
 
-const router = Router();
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// JWT secrets
-export const JWT_SECRET = "thisshouldbeasecretprotectedbyusonlysoonecan";
+const router = Router();
 
 
 // POST /v1/auth/register
