@@ -1,12 +1,16 @@
 # TODO List
 
-TODO: Footer component
-TODO: Tour Guide for new users
-TODO: emoji on linear scale
+    TODO: Footer component
 
-TODO: Analytics of the form -> Analytics/page.tsx [17/12]
+    TODO: Tour Guide for new users
 
-TODO: if the user is there then show their name -> response-list.tsx
-`{response.submittedBy}` [16/12]
+    TODO: emoji on linear scale
 
-TODO: AI integration in form builder using Gemini [16/12]
+## Done by Now
+
+    TODO: Analytics of the form -> Analytics/page.tsx [17/12]
+
+    TODO: if the user is there then show their name -> response-list.tsx
+    `{response.submittedBy}` [16/12]
+
+    TODO: AI integration in form builder using Gemini [16/12]
