@@ -22,6 +22,24 @@ export async function fetchFormsForDashboard() {
 }
 
 
+export async function deleteFormForDashboard(formId: string) {
+    try {
+        const user = localStorage.getItem("user");
+
+        await axios.delete(
+            `http://localhost:8080/v1/forms/delete/${formId}`,
+            {
+                headers: {
+                authorization: `Bearer ${user}`,
+                },
+            }
+        );
+        return true;
+    } catch (error) {
+        console.log("Failed to delete form:", error);
+    }
+}
+
 
 export async function fetchResponsesForForm(formId: string) {
     try {
