@@ -2,6 +2,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { FormQuestion } from "@/types/form";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
+
+
 export function useFormSubmission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,7 +22,7 @@ export function useFormSubmission() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("http://localhost:8080/v1/forms/create", {
+      const response = await fetch(`${API_BASE_URL}/forms/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

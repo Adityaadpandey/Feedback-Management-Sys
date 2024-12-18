@@ -14,6 +14,9 @@ import { FormQuestion } from "@/types/form";
 import { useRouter } from "next/navigation";
 import { GradientText } from "../ui/gradient-text";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
+
+
 interface DragQuestion extends FormQuestion {
   _id: string;
 }
@@ -83,7 +86,7 @@ export function FormBuilder() {
           : q.options
       }));
 
-       const response = await fetch("http://localhost:8080/v1/forms/create", {
+       const response = await fetch(`${API_BASE_URL}/forms/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,10 +1,12 @@
 import axios from 'axios';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/v1";
+
 
 export async function fetchFormsForDashboard() {
   try {
     const user = localStorage.getItem("user");
 
-      const response = await axios.get('http://localhost:8080/v1/reports/titles', {
+      const response = await axios.get(`${API_BASE_URL}/reports/titles`, {
         headers: {
           authorization: `Bearer ${user}`,
         },
@@ -27,7 +29,7 @@ export async function deleteFormForDashboard(formId: string) {
         const user = localStorage.getItem("user");
 
         await axios.delete(
-            `http://localhost:8080/v1/forms/delete/${formId}`,
+            `${API_BASE_URL}/forms/delete/${formId}`,
             {
                 headers: {
                 authorization: `Bearer ${user}`,
@@ -46,7 +48,7 @@ export async function fetchResponsesForForm(formId: string) {
         const user = localStorage.getItem("user");
 
         const response = await axios.get(
-        `http://localhost:8080/v1/reports/form/${formId}`,
+        `${API_BASE_URL}/reports/form/${formId}`,
         {
             headers: {
             authorization: `Bearer ${user}`,

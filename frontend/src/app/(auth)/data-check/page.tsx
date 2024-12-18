@@ -7,12 +7,13 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
 const API = {
   login: async (clerkId) => {
-    return axios.post("http://localhost:8080/v1/auth/login", { clerkId });
+    return axios.post(`${API_BASE_URL}/auth/login`, { clerkId });
   },
   register: async (formData) => {
-    return axios.post("http://localhost:8080/v1/auth/register", formData);
+    return axios.post(`${API_BASE_URL}/auth/register`, formData);
   },
 };
 
