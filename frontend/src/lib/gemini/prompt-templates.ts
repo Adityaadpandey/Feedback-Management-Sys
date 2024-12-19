@@ -10,6 +10,7 @@ Create a form based on the following description. Only use these question types:
 - rating
 - linear-scale
 - matrix
+- file-upload
 
 
 For matrix questions, return options as an array of strings representing the rows.
