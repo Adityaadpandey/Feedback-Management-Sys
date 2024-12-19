@@ -3,11 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Toaster } from "@/components/ui/toaster";
 import { deleteFormForDashboard, fetchFormsForDashboard } from "@/lib/api/dashboard";
 import { FormTitle } from "@/types/form";
-import { ArrowRight, FileText, PlusCircleIcon, Trash2 } from "lucide-react";
+import { ArrowRight, FileText, PlusCircleIcon, Share2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from 'sonner';
 
 export default function FormsPage() {
     const router = useRouter();
@@ -49,6 +51,8 @@ export default function FormsPage() {
     const closeDeleteConfirmation = () => {
         setDelConfirmationView(null); // Reset the formId to close the confirmation dialog
     };
+
+    // const formUrl = `${window.location.origin}/form/${formId}`;
 
     return (
         <>
@@ -105,15 +109,32 @@ export default function FormsPage() {
                                         <Button
                                             variant="ghost"
                                             size="sm"
+                                            onClick={() => {
+                                                const link = `${window.location.origin}/form/${form._id}`
+                                                navigator.clipboard.writeText(link)
+                                                console.log("Copied link to clipboard: ", link)
+                                                toast.success("Link copied to clipboard. You can now share this link with your users");
+                                            }}
+                                            className="hover:bg-primary hover:text-primary-foreground "
+                                        >
+                                            <Share2 className="h-5 w-5" />
+                                            <Toaster/>
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
                                             onClick={() => openDeleteConfirmation(form._id)}
-                                            className="hover:bg-primary hover:text-primary-foreground ml-28"
+                                            className="hover:bg-primary hover:text-primary-foreground "
                                         >
                                             <Trash2 className="h-5 w-5 " />
                                         </Button>
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() => handleViewResponses(form._id)}
+                                            onClick={() => {
+                                                handleViewResponses(form._id)
+                                                toast.success("Please select")
+                                            }}
                                             className="hover:bg-primary hover:text-primary-foreground"
                                         >
                                             View Responses
