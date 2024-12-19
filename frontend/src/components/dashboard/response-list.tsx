@@ -20,7 +20,7 @@ export function ResponseList({ responses }: ResponseListProps) {
                         </div>
                         <div className="flex-1">
                             <div className="mb-2 flex items-center justify-between">
-                                {/* response Title */}
+                                {/* Response Title */}
                                 <p className="text-sm font-medium text-foreground">
                                     Response #{response._id.slice(-4)}
                                 </p>
@@ -30,20 +30,21 @@ export function ResponseList({ responses }: ResponseListProps) {
                                     })}
                                 </time>
                             </div>
-                            {/* userName */}
-                                {response.submittedBy?.user_name ? (
-                                    <p className="text-xs left-0 mb-2 font-medium text-foreground">user name : <span className="text-primary">{response.submittedBy.user_name}</span></p>
-                                ) : null}
+                            {/* User Name */}
+                            {response.submittedBy?.user_name && (
+                                <p className="text-xs mb-2 font-medium text-foreground">
+                                    User Name: <span className="text-primary">{response.submittedBy.user_name}</span>
+                                </p>
+                            )}
                             <div className="space-y-2">
+                                {/* Iterate over individual responses */}
                                 {response.responses.map((item) => (
                                     <div key={item._id} className="rounded-md bg-accent/50 p-3">
                                         <p className="text-sm text-muted-foreground mb-1">
                                             Question ID: {item.questionId}
                                         </p>
                                         <p className="text-sm text-foreground">
-                                            {Array.isArray(item.answer)
-                                                ? item.answer.join(", ")
-                                                : item.answer}
+                                            {renderAnswer(item.answer)}
                                         </p>
                                     </div>
                                 ))}
@@ -54,4 +55,31 @@ export function ResponseList({ responses }: ResponseListProps) {
             ))}
         </div>
     );
+}
+
+
+
+/**
+ * Utility to handle different answer types.
+ * @param answer The answer to a question.
+ */
+function renderAnswer(answer: any): string | JSX.Element {
+    if (Array.isArray(answer)) {
+        // Join arrays for display
+        return answer.join(", ");
+    } else if (typeof answer === "object" && answer !== null) {
+        // Format objects for display
+        return (
+            <ul className="list-none list-inside">
+                {Object.entries(answer).map(([key, value]) => (
+                    <li key={key}>
+                        <strong>{key}:</strong> {value}
+                    </li>
+                ))}
+            </ul>
+        );
+    } else {
+        // Default case for strings, numbers, or other values
+        return answer?.toString() || "No answer provided";
+    }
 }
