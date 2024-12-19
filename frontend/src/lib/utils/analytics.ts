@@ -1,6 +1,12 @@
+
+// FOr the analytics page, we need to process the data from the responses to display it in a meaningful way
+// We have different types of questions, so we need to process them differently
+
+
+// For multiple choice questions, we can display the data in a pie chart
 export function processMultipleChoiceData(question: any, responses: any[]) {
   const answerCounts: Record<string, number> = {};
-  
+
   responses.forEach(response => {
     const answer = response.responses.find((r: any) => r.questionId === question._id)?.answer;
     if (answer) {
@@ -14,9 +20,10 @@ export function processMultipleChoiceData(question: any, responses: any[]) {
   }));
 }
 
+// For checkbox questions, we can display the data in a bar chart
 export function processCheckboxData(question: any, responses: any[]) {
   const answerCounts: Record<string, number> = {};
-  
+
   responses.forEach(response => {
     const answer = response.responses.find((r: any) => r.questionId === question._id)?.answer;
     if (Array.isArray(answer)) {
@@ -32,23 +39,30 @@ export function processCheckboxData(question: any, responses: any[]) {
   }));
 }
 
-export function processScaleData(question: any, responses: any[]) {
-  const answers = responses
-    .map(response => 
-      response.responses.find((r: any) => r.questionId === question._id)?.answer
-    )
-    .filter(Boolean)
-    .map(Number);
+// For rating and linear scale questions, we can display the average rating and the distribution of ratings in a bar chart
+export function processScaleData(
+    question: { _id: string },
+    responses: Array<{ responses: Array<{ questionId: string; answer: string | number }> }>,
+    scale: number
+  ): { rating: number; count: number }[] {
+    const answers = responses
+      .map(response =>
+        response.responses.find(r => r.questionId === question._id)?.answer
+      )
+      .filter(answer => answer !== undefined)
+      .map(answer => Number(answer));
 
-  return Array.from({ length: 10 }, (_, i) => ({
-    rating: i + 1,
-    count: answers.filter(answer => answer === i + 1).length
-  }));
-}
+    return Array.from({ length: scale }, (_, i) => ({
+      rating: i + 1,
+      count: answers.filter(answer => answer === i + 1).length,
+    }));
+  }
 
+
+// Calculate the average rating for a question
 export function calculateAverageRating(responses: any[], questionId: string) {
   const ratings = responses
-    .map(response => 
+    .map(response =>
       response.responses.find((r: any) => r.questionId === questionId)?.answer
     )
     .filter(Boolean)
@@ -58,9 +72,11 @@ export function calculateAverageRating(responses: any[], questionId: string) {
   return ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
 }
 
+
+// For time questions, we can display the distribution of responses in a bar chart
 export function processTimeData(responses: any[], questionId: string) {
   const timeData = responses
-    .map(response => 
+    .map(response =>
       response.responses.find((r: any) => r.questionId === questionId)?.answer
     )
     .filter(Boolean);
