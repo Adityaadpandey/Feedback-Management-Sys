@@ -2,6 +2,8 @@
 
     TODO: Footer component
 
+    TODO: adding Gemini comp with admin component and push btn and fetch
+
     TODO: Tour Guide for new users
 
     TODO: emoji on linear scale
