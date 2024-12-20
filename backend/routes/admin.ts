@@ -1,8 +1,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Router } from "express";
+import { Router, Request } from "express";
 import Analytics from "../models/Analytics";
 import Form from "../models/Form";
 import Responses from "../models/Responses";
+import { authenticate } from "../middleware/authenticator";
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -98,7 +99,12 @@ router.get("/ai/:id", async (req, res): Promise<any> => {
     }
 });
 
-router.post('/ai/push/:id', async (req, res): Promise<any> => {
+router.post('/ai/push/:id', authenticate, async (req: Request & { user: any }, res): Promise<any> => {
+    // TODO check for user role to be paid and authenticated
+    // Use the authenticated user's ID
+    // const { role } = req.user;   // from authenticate middleware
+
+
     const { id } = req.params;
 
     if (!id) {

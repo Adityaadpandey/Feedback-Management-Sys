@@ -2,6 +2,7 @@
 
 import { AnalyticsHeader } from "@/components/analytics/analytics-header";
 import { AnalyticsOverview } from "@/components/analytics/analytics-overview";
+import GenratedAnalytics from "@/components/analytics/genrated-analytics";
 import { QuestionAnalytics } from "@/components/analytics/question-analytics";
 import { ResponsesTimeline } from "@/components/analytics/responses-timeline";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -54,14 +55,13 @@ export function AnalyticsClient({ formId }: { formId: string }) {
             <AnalyticsHeader form={data.form} />
             <main className="container mx-auto px-4 py-8">
                 <div className="grid gap-8">
-
-                    {/* TODO add the no of responses */}
                     <AnalyticsOverview analytics={data.information} />
                     <ResponsesTimeline responses={data.responses} />
                     <QuestionAnalytics
                         questions={data.form.questions}
                         responses={data.responses}
                     />
+                    <GenratedAnalytics responseData={data.form} />
                 </div>
             </main>
         </div>

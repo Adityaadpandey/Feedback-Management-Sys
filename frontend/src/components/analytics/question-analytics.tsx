@@ -54,13 +54,13 @@ export function QuestionAnalytics({ questions, responses }: QuestionAnalyticsPro
             }
 
 
-            case "time":
-                return (
-                    <BarChart
-                        data={processTimeData(responses, question._id)}
-                        title={`${question.questionText} (Hour Distribution)`}
-                    />
-                );
+            // case "time":
+            //     return (
+            //         <BarChart
+            //             data={processTimeData(responses, question._id)}
+            //             title={`${question.questionText} (Hour Distribution)`}
+            //         />
+            //     );
 
             //   case "short-answer":
             //   case "paragraph":
