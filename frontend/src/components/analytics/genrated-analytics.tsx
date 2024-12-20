@@ -1,4 +1,5 @@
 import { getFormAnalyticsByAI } from '@/lib/api/analytics';
+import { CheckCircle, List, MessageSquare } from 'lucide-react'; // Import icons
 import { useEffect, useState } from 'react';
 import { Card } from '../ui/card';
 import { LoadingSpinner } from '../ui/loading-spinner';
@@ -55,7 +56,10 @@ const GeneratedAnalytics = ({ responseData }) => {
 
             {/* Overall Feedback */}
             <div>
-                <h2 className="text-lg font-medium text-primary mb-3">Overall Feedback:</h2>
+                <h2 className="text-lg font-medium text-primary mb-3 flex items-center">
+                    <MessageSquare className="mr-2 text-primary" size={20} />
+                    Overall Feedback:
+                </h2>
                 <p className="text-sm text-foreground leading-relaxed">
                     {analyticsData.overall || 'No feedback available.'}
                 </p>
@@ -63,7 +67,10 @@ const GeneratedAnalytics = ({ responseData }) => {
 
             {/* Next Steps */}
             <div className="mb-4">
-                <h2 className="text-md font-medium text-primary mb-2">Next Steps:</h2>
+                <h2 className="text-md font-medium text-primary mb-2 flex items-center">
+                    <CheckCircle className="mr-2 text-primary" size={20} />
+                    Next Steps:
+                </h2>
                 <p className="text-sm text-foreground mt-1 leading-relaxed" style={{ whiteSpace: 'pre-line' }}>
                     {analyticsData.next_steps || 'N/A'}
                 </p>
@@ -71,7 +78,10 @@ const GeneratedAnalytics = ({ responseData }) => {
 
             {/* Key Conclusions */}
             <div>
-                <h2 className="text-lg font-medium text-primary mb-3">Key Conclusions:</h2>
+                <h2 className="text-lg font-medium text-primary mb-3 flex items-center">
+                    <List className="mr-2 text-primary" size={20} />
+                    Key Conclusions:
+                </h2>
                 {analyticsData.key_conclusions && analyticsData.key_conclusions.length > 0 ? (
                     <ul className="list-disc list-inside text-sm text-foreground space-y-2 pl-4">
                         {analyticsData.key_conclusions.map((conclusion, index) => (
