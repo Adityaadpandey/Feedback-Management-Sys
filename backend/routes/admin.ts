@@ -98,4 +98,50 @@ router.get("/ai/:id", async (req, res): Promise<any> => {
     }
 });
 
+router.post('/ai/push/:id', async (req, res): Promise<any> => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ message: "Form ID is required" });
+    }
+
+    try {
+
+        // Check if analytics already exist
+            let analytics = await Analytics.findOne({ formId: id });
+            // Fetch form and responses data
+            const form = await Form.findById(id);
+            if (!form) {
+                return res.status(404).json({ message: "Form not found" });
+            }
+            const responses = await Responses.find({ formId: id });
+
+            // Prepare the prompt for AI
+            const prompt = JSON.stringify({
+                form,
+                responses,
+            });
+
+            // Run AI model
+            const aiResponse = await run(prompt);
+
+            // Parse AI response
+            const { overall, next_steps, key_conclusions } = JSON.parse(aiResponse);
+
+
+        //  update analytics to the database
+        if(analytics){
+            analytics.overall = overall;
+            analytics.next_steps = next_steps;
+            analytics.key_conclusions = key_conclusions;
+            analytics.updatedOn = new Date();
+            await analytics.save();
+        }
+        res.json(analytics);
+    } catch (error) {
+        console.error("Error generating analytics:", error.message);
+        res.status(500).json({ message: "An error occurred while generating analytics." });
+    }
+})
+
 export const admin = router;
