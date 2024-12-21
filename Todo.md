@@ -4,6 +4,8 @@
 
     TODO: adding Gemini comp with admin component and push btn and fetch
 
+    TODO: Add the user type feature for paid and free users
+
     TODO: Tour Guide for new users
 
     TODO: emoji on linear scale
