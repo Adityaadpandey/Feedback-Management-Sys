@@ -42,19 +42,19 @@ const UserSchema: Schema = new Schema(
             },
             required: false, // Make sure the field is not required
         },
-        subscription_plan: {
+        role: {
             type: String,
-            enum: ["free", "basic", "premium"],
-            default: "free",
+            enum: ["user", "admin"],
+            default: "user",
         },
         subscription_expiry: {
             type: Date,
             default: null, // Used for premium subscriptions
         },
-        role: {
+        subscription_plan: {
             type: String,
-            enum: ["user", "admin_v3", "admin_v7", "admin_10"],
-            default: "user",
+            enum: ["free", "admin_v3", "admin_v7", "admin_v10"],
+            default: "free",
         },
         isActive: {
             type: Boolean,
@@ -76,7 +76,7 @@ const UserSchema: Schema = new Schema(
 
 // Middleware to set ai_generation_limit based on the role before saving the user
 UserSchema.pre('save', function (next) {
-    if (this.isNew || this.isModified('role')) {
+    if (this.isNew || this.isModified('subscription_plan')) {
         // Set AI generation limit based on the user's role
         switch (this.role) {
             case 'admin_v3':
@@ -85,7 +85,7 @@ UserSchema.pre('save', function (next) {
             case 'admin_v7':
                 this.ai_generation_limit = 7;
                 break;
-            case 'admin_10':
+            case 'admin_v10':
                 this.ai_generation_limit = 10;
                 break;
             default:
