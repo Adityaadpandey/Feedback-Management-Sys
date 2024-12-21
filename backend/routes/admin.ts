@@ -24,8 +24,18 @@ const genAI = new GoogleGenerativeAI(apiKey || "");
 
 const model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash-8b",
-    systemInstruction: "\nYou are provided with a feedback form and its responses. Analyze them and provide a summary in the following exact JSON format:\n\n{\n  \"overall\": \"Summary of the overall feedback.\",\n  \"next_steps\": \"The next actionable steps based on the feedback.\",\n  \"key_conclusions\": [\"Key conclusion 1\", \"Key conclusion 2\", \"...\"]\n}\n1. The \"overall\" field should summarize the overall feedback provided by the users in whole in a broder way.\n2. The \"next_steps\" field should outline clear steps for the user to follow based on the feedback.\n3. The \"key_conclusions\" field should be a list of key conclusions and actionable outcomes derived from the feedback.\n\nPlease ensure:\n- The JSON is correctly formatted and valid.\n",
-    tools: [{ codeExecution: {} }],
+    systemInstruction: `
+You are provided with a feedback form and its responses. Analyze them and provide a summary in the following exact JSON format:
+
+{
+  "overall": "Summary of the overall feedback.",
+  "next_steps": "The next actionable steps based on the feedback.",
+  "key_conclusions": ["Key conclusion 1", "Key conclusion 2", "..."]
+}
+
+Please ensure:
+1. The JSON is correctly formatted and valid.
+2. Summarize feedback clearly and provide actionable insights.`,
 });
 
 const generationConfig = {
@@ -36,7 +46,7 @@ const generationConfig = {
     responseMimeType: "application/json",
 };
 
-async function run(prompt: string) {
+async function runAI(prompt: string): Promise<any> {
     try {
         const chatSession = model.startChat({
             generationConfig,
@@ -44,7 +54,7 @@ async function run(prompt: string) {
         });
 
         const result = await chatSession.sendMessage(prompt);
-        return result.response.text();
+        return JSON.parse(result.response.text()); // Parse AI response directly
     } catch (error) {
         console.error("Error during AI processing:", error);
         throw new Error("Failed to generate analytics from AI.");
@@ -53,144 +63,108 @@ async function run(prompt: string) {
 
 const router = Router();
 
-// GET all forms
+/** Utility Function: Update AI Generation Limit for User */
+async function decrementUserLimit(userId: string): Promise<void> {
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    if (user.ai_generation_limit <= 0) {
+        throw new Error("AI generation limit exceeded");
+    }
+
+    await User.findByIdAndUpdate(userId, {
+        ai_generation_limit: user.ai_generation_limit - 1,
+    });
+}
+
+/** GET all forms (Placeholder Endpoint) */
 router.get("/", (req, res) => {
     res.send("Admin");
 });
 
-
-// GET analytics for a specific form by ID
-router.get("/ai/:id", authenticate, async (req: RequestWithUser, res): Promise<any> => {
+/** GET analytics for a specific form by ID */
+router.get("/ai/:id", authenticate, async (req: RequestWithUser, res):Promise<any> => {
     const userId = req.user?._id;
     const { id } = req.params;
 
-    if (!id) {
-        return res.status(400).json({ message: "Form ID is required" });
-    }
-    if (!userId) {
-        return res.status(401).json({ message: "Authentication required" });
-    }
+    if (!id) return res.status(400).json({ message: "Form ID is required" });
+    if (!userId) return res.status(401).json({ message: "Authentication required" });
 
     try {
         // Check if analytics already exist
         let analytics = await Analytics.findOne({ formId: id });
 
         if (!analytics) {
-            // Fetch form and responses data
+            // Fetch form and responses
             const form = await Form.findById(id);
-            if (!form) {
-                return res.status(404).json({ message: "Form not found" });
-            }
-
+            if (!form) return res.status(404).json({ message: "Form not found" });
 
             const responses = await Responses.find({ formId: id });
 
-            // Prepare the prompt for AI
-            const prompt = JSON.stringify({
-                form,
-                responses,
-            });
-
             // Run AI model
-            const aiResponse = await run(prompt);
-
-            // Parse AI response
-            const { overall, next_steps, key_conclusions } = JSON.parse(aiResponse);
-
-            const user = await User.findById(userId);
-            if (!user) {
-                return res.status(404).json({ message: "User not found" });
-            }
-
-            const updatedUser = await User.findByIdAndUpdate(
-                userId,
-                { ai_generation_limit: user.ai_generation_limit - 1 },
-                { new: true } // Return the updated document
-            );
-            if (!updatedUser) {
-                return res.status(500).json({ message: "User update failed" }); // Handle update failure
-            }
-
+            const aiResponse = await runAI(JSON.stringify({ form, responses }));
 
             // Save analytics to the database
             analytics = await Analytics.create({
                 formId: id,
-                overall,
-                next_steps,
-                key_conclusions,
+                ...aiResponse,
             });
 
-
-            // res.json(aiResponse);
+            // Decrement AI generation limit
+            await decrementUserLimit(userId);
         }
 
         res.json(analytics);
     } catch (error) {
         console.error("Error generating analytics:", error.message);
-        res.status(500).json({ message: "An error occurred while generating analytics." });
+        res.status(500).json({ message: error.message || "Internal server error" });
     }
 });
 
-router.post('/ai/push/:id', authenticate, async (req: Request & { user: any }, res): Promise<any> => {
-
-    const userId = req.user._id;
-
-
+/** POST to update analytics for a specific form */
+router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res):Promise<any> => {
+    const userId = req.user?._id;
     const { id } = req.params;
 
-    if (!id) {
-        return res.status(400).json({ message: "Form ID is required" });
-    }
+    if (!id) return res.status(400).json({ message: "Form ID is required" });
+    if (!userId) return res.status(401).json({ message: "Authentication required" });
 
     try {
+        // Fetch form and responses
+        const form = await Form.findById(id);
+        if (!form) return res.status(404).json({ message: "Form not found" });
+
+        const responses = await Responses.find({ formId: id });
+
+        // Run AI model
+        const aiResponse = await runAI(JSON.stringify({ form, responses }));
 
         // Check if analytics already exist
         let analytics = await Analytics.findOne({ formId: id });
-        // Fetch form and responses data
-        const form = await Form.findById(id);
-        if (!form) {
-            return res.status(404).json({ message: "Form not found" });
-        }
-        const responses = await Responses.find({ formId: id });
 
-        // Prepare the prompt for AI
-        const prompt = JSON.stringify({
-            form,
-            responses,
-        });
-
-        // Run AI model
-        const aiResponse = await run(prompt);
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { ai_generation_limit: user.ai_generation_limit - 1 },
-            { new: true } // Return the updated document
-        );
-        if (!updatedUser) {
-            return res.status(500).json({ message: "User update failed" }); // Handle update failure
-        }
-
-        // Parse AI response
-        const { overall, next_steps, key_conclusions } = JSON.parse(aiResponse);
-
-
-        //  update analytics to the database
         if (analytics) {
-            analytics.overall = overall;
-            analytics.next_steps = next_steps;
-            analytics.key_conclusions = key_conclusions;
+            // Update existing analytics
+            analytics.overall = aiResponse.overall;
+            analytics.next_steps = aiResponse.next_steps;
+            analytics.key_conclusions = aiResponse.key_conclusions;
             analytics.updatedOn = new Date();
             await analytics.save();
+        } else {
+            // Create new analytics
+            analytics = await Analytics.create({
+                formId: id,
+                ...aiResponse,
+            });
         }
+
+        // Decrement AI generation limit
+        await decrementUserLimit(userId);
+
         res.json(analytics);
     } catch (error) {
-        console.error("Error generating analytics:", error.message);
-        res.status(500).json({ message: "An error occurred while generating analytics." });
+        console.error("Error updating analytics:", error.message);
+        res.status(500).json({ message: error.message || "Internal server error" });
     }
-})
+});
 
 export const admin = router;
