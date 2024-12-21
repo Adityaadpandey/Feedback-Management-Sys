@@ -1,9 +1,19 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Router, Request } from "express";
+import { Request, Router } from "express";
+import { authenticate } from "../middleware/authenticator";
 import Analytics from "../models/Analytics";
 import Form from "../models/Form";
 import Responses from "../models/Responses";
-import { authenticate } from "../middleware/authenticator";
+import User from "../models/Users";
+
+interface AuthenticatedUser {
+    _id: string;
+}
+
+// Extend the Request type to include the user field
+interface RequestWithUser extends Request {
+    user?: AuthenticatedUser | null;
+}
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
@@ -48,12 +58,17 @@ router.get("/", (req, res) => {
     res.send("Admin");
 });
 
+
 // GET analytics for a specific form by ID
-router.get("/ai/:id", async (req, res): Promise<any> => {
+router.get("/ai/:id", authenticate, async (req: RequestWithUser, res): Promise<any> => {
+    const userId = req.user?._id;
     const { id } = req.params;
 
     if (!id) {
         return res.status(400).json({ message: "Form ID is required" });
+    }
+    if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
     }
 
     try {
@@ -67,6 +82,7 @@ router.get("/ai/:id", async (req, res): Promise<any> => {
                 return res.status(404).json({ message: "Form not found" });
             }
 
+
             const responses = await Responses.find({ formId: id });
 
             // Prepare the prompt for AI
@@ -81,6 +97,21 @@ router.get("/ai/:id", async (req, res): Promise<any> => {
             // Parse AI response
             const { overall, next_steps, key_conclusions } = JSON.parse(aiResponse);
 
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                { ai_generation_limit: user.ai_generation_limit - 1 },
+                { new: true } // Return the updated document
+            );
+            if (!updatedUser) {
+                return res.status(500).json({ message: "User update failed" }); // Handle update failure
+            }
+
+
             // Save analytics to the database
             analytics = await Analytics.create({
                 formId: id,
@@ -88,6 +119,7 @@ router.get("/ai/:id", async (req, res): Promise<any> => {
                 next_steps,
                 key_conclusions,
             });
+
 
             // res.json(aiResponse);
         }
@@ -100,9 +132,8 @@ router.get("/ai/:id", async (req, res): Promise<any> => {
 });
 
 router.post('/ai/push/:id', authenticate, async (req: Request & { user: any }, res): Promise<any> => {
-    // TODO check for user role to be paid and authenticated
-    // Use the authenticated user's ID
-    // const { role } = req.user;   // from authenticate middleware
+
+    const userId = req.user._id;
 
 
     const { id } = req.params;
@@ -114,29 +145,41 @@ router.post('/ai/push/:id', authenticate, async (req: Request & { user: any }, r
     try {
 
         // Check if analytics already exist
-            let analytics = await Analytics.findOne({ formId: id });
-            // Fetch form and responses data
-            const form = await Form.findById(id);
-            if (!form) {
-                return res.status(404).json({ message: "Form not found" });
-            }
-            const responses = await Responses.find({ formId: id });
+        let analytics = await Analytics.findOne({ formId: id });
+        // Fetch form and responses data
+        const form = await Form.findById(id);
+        if (!form) {
+            return res.status(404).json({ message: "Form not found" });
+        }
+        const responses = await Responses.find({ formId: id });
 
-            // Prepare the prompt for AI
-            const prompt = JSON.stringify({
-                form,
-                responses,
-            });
+        // Prepare the prompt for AI
+        const prompt = JSON.stringify({
+            form,
+            responses,
+        });
 
-            // Run AI model
-            const aiResponse = await run(prompt);
+        // Run AI model
+        const aiResponse = await run(prompt);
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { ai_generation_limit: user.ai_generation_limit - 1 },
+            { new: true } // Return the updated document
+        );
+        if (!updatedUser) {
+            return res.status(500).json({ message: "User update failed" }); // Handle update failure
+        }
 
-            // Parse AI response
-            const { overall, next_steps, key_conclusions } = JSON.parse(aiResponse);
+        // Parse AI response
+        const { overall, next_steps, key_conclusions } = JSON.parse(aiResponse);
 
 
         //  update analytics to the database
-        if(analytics){
+        if (analytics) {
             analytics.overall = overall;
             analytics.next_steps = next_steps;
             analytics.key_conclusions = key_conclusions;
