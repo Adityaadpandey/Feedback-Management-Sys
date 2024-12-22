@@ -109,7 +109,7 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response):
             // Fetch form and responses
             const form = await Form.findById(id);
             if (!form) return res.status(404).json({ message: "Form not found" });
-            
+
             // Decrement AI generation limit
             await decrementUserLimit(userId);
 
@@ -173,5 +173,7 @@ router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res: Resp
         handleError(res, 500, "Error updating analytics", error);
     }
 });
+
+
 
 export const admin = router;

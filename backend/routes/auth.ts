@@ -28,35 +28,44 @@ const createJwtToken = (user: any) => {
     );
 };
 
-// Generic error handler to avoid redundancy
+// Enhanced error handler
 const handleError = (res: Response, statusCode: number, message: string, error?: any) => {
+    console.error(error); // Log error details for debugging
+
+    if (error && error.message === "AI generation limit exceeded") {
+        return res.status(400).json({
+            message: "Error updating analytics",
+            error: { message: error.message },
+        });
+    }
+
     res.status(statusCode).json({ message, error });
 };
 
 // POST /v1/auth/register
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res):Promise<any> => {
     const { name, email, phone, role, clerkId } = req.body;
 
     try {
-        // Check if email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) return handleError(res, 400, "Email is already registered");
 
-        // Create a new user and save
         const newUser = new User({ name, email, phone, role, clerkId });
         await newUser.save();
 
-        // Create JWT token
         const accessToken = createJwtToken(newUser);
 
-        res.status(201).json({ accessToken });
+        res.status(201).json({
+            accessToken: accessToken,
+            message: "User registered successfully",
+        });
     } catch (error) {
         handleError(res, 500, "Internal server error", error);
     }
 });
 
 // POST /v1/auth/login
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res):Promise<any> => {
     const { clerkId } = req.body;
 
     try {
@@ -72,12 +81,11 @@ router.post("/login", async (req, res) => {
 });
 
 // POST /v1/auth/upgrade/:version
-router.get("/upgrade/:version", authenticate, async (req: RequestWithUser, res: Response) => {
+router.get("/upgrade/:version", authenticate, async (req: RequestWithUser, res: Response):Promise<any> => {
     const userId = req.user?._id;
     const { version } = req.params;
 
     if (!userId) return handleError(res, 400, "Invalid user ID");
-
 
     try {
         const user = await User.findById(userId);
@@ -87,17 +95,15 @@ router.get("/upgrade/:version", authenticate, async (req: RequestWithUser, res: 
         let upgradedRole = "user";
         let aiGenerationLimit = 0;
 
-        // Define version-based logic for upgrading user
         const upgradeConfig: Record<string, { role: string, aiGenerationLimit: number }> = {
             admin_v3: { role: "admin", aiGenerationLimit: 3 },
             admin_v7: { role: "admin", aiGenerationLimit: 7 },
-            admin_v10: { role: "admin", aiGenerationLimit: 10 }
+            admin_v10: { role: "admin", aiGenerationLimit: 10 },
         };
 
         const upgradeData = upgradeConfig[version] || { role: "user", aiGenerationLimit: 0 };
-        subscriptionPlan = upgradeData.role === "admin" ? version : "free"; // If admin, assign version-based subscription
+        subscriptionPlan = upgradeData.role === "admin" ? version : "free";
 
-        // Update the user's role and other details
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { role: upgradeData.role, ai_generation_limit: upgradeData.aiGenerationLimit, subscription_plan: subscriptionPlan },
@@ -108,7 +114,9 @@ router.get("/upgrade/:version", authenticate, async (req: RequestWithUser, res: 
 
         res.status(200).json({
             message: "User role updated successfully",
-            updatedUser
+            role: updatedUser.role,
+            subscriptionPlan: updatedUser.subscription_plan,
+            
         });
     } catch (error) {
         handleError(res, 500, "Internal server error", error);
