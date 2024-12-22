@@ -12,7 +12,7 @@ function FormSubmittedSuccessfully() {
       animate={{ opacity: 1, y: 0 }}
       className="bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 mb-5 sticky top-0 z-10"
     >
-      <div className="mx-auto mt-20 px-4 py-4 min-w-[1000px]">
+      <div className="mx-auto pt-20 px-4 py-4 min-w-[1000px]">
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2"
           role="alert"

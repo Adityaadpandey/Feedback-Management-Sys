@@ -14,9 +14,9 @@ import { InteractiveShowcase } from "./InteractiveShowcase";
 export function HeroSection() {
     const router = useRouter()
     return (
-        <div className="w-full relative isolate overflow-hidden pt-20">
-            <MovingBorder className="rounded-[30px] overflow-hidden">
-                <Spotlight className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 py-12 bg-background/95 relative">
+        <div className="w-full relative isolate overflow-hidden ">
+            <MovingBorder className="rounded-[30px] overflow-hidden ">
+                <Spotlight className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 py-12 bg-background/95 relative pt-28">
                     <HeroBadge />
 
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold max-w-4xl mx-auto my-8 leading-tight">
