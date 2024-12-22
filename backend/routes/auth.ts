@@ -1,4 +1,4 @@
-import { Request, Router } from "express";
+import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import { authenticate } from "../middleware/authenticator";
 import User from "../models/Users";
@@ -16,129 +16,103 @@ interface RequestWithUser extends Request {
     user?: AuthenticatedUser | null;
 }
 
+// Helper function for creating JWT
+const createJwtToken = (user: any) => {
+    return jwt.sign(
+        {
+            clerkId: user.clerkId,
+            role: user.role,
+            name: user.name,
+        },
+        JWT_SECRET
+    );
+};
+
+// Generic error handler to avoid redundancy
+const handleError = (res: Response, statusCode: number, message: string, error?: any) => {
+    res.status(statusCode).json({ message, error });
+};
+
 // POST /v1/auth/register
 router.post("/register", async (req, res) => {
     const { name, email, phone, role, clerkId } = req.body;
 
     try {
+        // Check if email already exists
         const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            res.status(400).json({ message: "Email is already registered" });
-            return;
-        }
-        // const hashedclerkId = await bcrypt.hash(clerkId, 10);
+        if (existingUser) return handleError(res, 400, "Email is already registered");
 
-        const newUser = new User({
-            name,
-            email,
-            phone,
-            role,
-            clerkId,
-        });
-
+        // Create a new user and save
+        const newUser = new User({ name, email, phone, role, clerkId });
         await newUser.save();
 
-        const user = await User.findOne({ clerkId });
+        // Create JWT token
+        const accessToken = createJwtToken(newUser);
 
-        // res.status(201).json({ message: "User registered successfully" });
-        const accessToken = jwt.sign(
-            {
-                clerkId: user.clerkId,
-                role: user.role,
-                name: user.name,
-            },
-            JWT_SECRET
-        );
-
-        res.json({ accessToken });
+        res.status(201).json({ accessToken });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error });
+        handleError(res, 500, "Internal server error", error);
     }
 });
 
 // POST /v1/auth/login
 router.post("/login", async (req, res) => {
-
-    // const hashedclerkId = await bcrypt.hash(clerkId, 10);
+    const { clerkId } = req.body;
 
     try {
-        const { clerkId } = req.body;
         const user = await User.findOne({ clerkId });
-        if (!user) {
-            res.status(401).json({ message: "Invalid credentials" });
-        }
+        if (!user) return handleError(res, 401, "Invalid credentials");
 
-        const accessToken = jwt.sign(
-            {
-                clerkId: user.clerkId,
-                role: user.role,
-                name: user.name,
-            },
-            JWT_SECRET
-        );
+        const accessToken = createJwtToken(user);
 
         res.status(200).json({ accessToken });
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error });
+        handleError(res, 500, "Internal server error", error);
     }
 });
 
+// POST /v1/auth/upgrade/:version
+router.get("/upgrade/:version", authenticate, async (req: RequestWithUser, res: Response) => {
+    const userId = req.user?._id;
+    const { version } = req.params;
 
+    if (!userId) return handleError(res, 400, "Invalid user ID");
 
-router.get('/upgrade/:version', authenticate, async (req: RequestWithUser, res): Promise<any> => {
-    const userId = req.user?._id; // Extract user ID from authenticated request
-    const { version } = req.params; // Extract version from route parameters
-
-    if (!userId) {
-        return res.status(400).json({ message: "Invalid user ID" }); // Validate userId presence
-    }
 
     try {
-        // Fetch the user from the database by their ID
         const user = await User.findById(userId);
-        if (!user) {
-            return res.status(401).json({ message: "User not found" }); // Ensure user exists
-        }
+        if (!user) return handleError(res, 404, "User not found");
 
-        let subscription_plan= version
-        let upgradedRole = 'admin'; // Default to the provided version
-        let ai_generation_limit = 0; // Default AI generation limit
+        let subscriptionPlan = "free";
+        let upgradedRole = "user";
+        let aiGenerationLimit = 0;
 
-        // Determine the upgrade path based on the user's current role
-        if (version === "admin_v3") {
-            ai_generation_limit = 3;
-        } else if (version === "admin_v7") {
-            ai_generation_limit = 7;
-        } else if (version === "admin_v10") {
-            ai_generation_limit = 10;
-        }
-        else {
-            subscription_plan = 'free';
-            upgradedRole = 'user';
-            ai_generation_limit = 0;
-        }
+        // Define version-based logic for upgrading user
+        const upgradeConfig: Record<string, { role: string, aiGenerationLimit: number }> = {
+            admin_v3: { role: "admin", aiGenerationLimit: 3 },
+            admin_v7: { role: "admin", aiGenerationLimit: 7 },
+            admin_v10: { role: "admin", aiGenerationLimit: 10 }
+        };
 
+        const upgradeData = upgradeConfig[version] || { role: "user", aiGenerationLimit: 0 };
+        subscriptionPlan = upgradeData.role === "admin" ? version : "free"; // If admin, assign version-based subscription
 
-        // Update the user document with the new role and AI generation limit
+        // Update the user's role and other details
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            { role: upgradedRole, ai_generation_limit,subscription_plan },
-            { new: true } // Return the updated document
+            { role: upgradeData.role, ai_generation_limit: upgradeData.aiGenerationLimit, subscription_plan: subscriptionPlan },
+            { new: true }
         );
 
-        if (!updatedUser) {
-            return res.status(500).json({ message: "User update failed" }); // Handle update failure
-        }
+        if (!updatedUser) return handleError(res, 500, "User update failed");
 
         res.status(200).json({
             message: "User role updated successfully",
             updatedUser
-        }); // Send a success response
+        });
     } catch (error) {
-        console.error("Error upgrading user role:", error); // Log errors for debugging
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        handleError(res, 500, "Internal server error", error);
     }
 });
-
 
 export const auth = router;

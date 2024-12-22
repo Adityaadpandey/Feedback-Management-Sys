@@ -12,6 +12,8 @@
 
 ## Done by Now
 
+    TODO: Add the user type feature for paid and free users in backend
+
     TODO: Analytics of the form -> Analytics/page.tsx [17/12]
 
     TODO: if the user is there then show their name -> response-list.tsx

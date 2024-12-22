@@ -63,6 +63,7 @@ export function ResponseList({ responses }: ResponseListProps) {
  * Utility to handle different answer types.
  * @param answer The answer to a question.
  */
+
 function renderAnswer(answer: any): string | JSX.Element {
     if (Array.isArray(answer)) {
         // Join arrays for display
@@ -70,13 +71,15 @@ function renderAnswer(answer: any): string | JSX.Element {
     } else if (typeof answer === "object" && answer !== null) {
         // Format objects for display
         return (
-            <ul className="list-none list-inside">
-                {Object.entries(answer).map(([key, value]) => (
-                    <li key={key}>
-                        <strong>{key}:</strong> {value}
-                    </li>
-                ))}
-            </ul>
+            <div>
+                <ul className="list-none list-inside">
+                    {Object.entries(answer).map(([key, value]) => (
+                        <li key={key}>
+                            <strong>{key}:</strong> {value}
+                        </li>
+                    ))}
+                </ul>
+            </div>
         );
     } else {
         // Default case for strings, numbers, or other values
