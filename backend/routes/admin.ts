@@ -64,6 +64,16 @@ async function runAI(prompt: string): Promise<any> {
 // Centralized error handler
 const handleError = (res: Response, statusCode: number, message: string, error?: any) => {
     console.error(error); // Log error details for debugging
+
+    // If error message indicates AI generation limit exceeded
+    if (error && error.message === "AI generation limit exceeded") {
+        return res.status(400).json({
+            message: "Error updating analytics",
+            error: { message: error.message },
+        });
+    }
+
+    // General error handler for other errors
     res.status(statusCode).json({ message, error });
 };
 
@@ -99,6 +109,9 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response):
             // Fetch form and responses
             const form = await Form.findById(id);
             if (!form) return res.status(404).json({ message: "Form not found" });
+            
+            // Decrement AI generation limit
+            await decrementUserLimit(userId);
 
             const responses = await Responses.find({ formId: id });
 
@@ -111,8 +124,6 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response):
                 ...aiResponse,
             });
 
-            // Decrement AI generation limit
-            await decrementUserLimit(userId);
         }
 
         res.json(analytics);
