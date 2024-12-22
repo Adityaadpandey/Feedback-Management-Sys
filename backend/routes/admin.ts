@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Request, Router } from "express";
+import { Request, Response, Router } from "express";
 import { authenticate } from "../middleware/authenticator";
 import Analytics from "../models/Analytics";
 import Form from "../models/Form";
@@ -61,9 +61,13 @@ async function runAI(prompt: string): Promise<any> {
     }
 }
 
-const router = Router();
+// Centralized error handler
+const handleError = (res: Response, statusCode: number, message: string, error?: any) => {
+    console.error(error); // Log error details for debugging
+    res.status(statusCode).json({ message, error });
+};
 
-/** Utility Function: Update AI Generation Limit for User */
+// Utility function to decrement user AI generation limit
 async function decrementUserLimit(userId: string): Promise<void> {
     const user = await User.findById(userId);
     if (!user) throw new Error("User not found");
@@ -77,13 +81,10 @@ async function decrementUserLimit(userId: string): Promise<void> {
     });
 }
 
-/** GET all forms (Placeholder Endpoint) */
-router.get("/", (req, res) => {
-    res.send("Admin");
-});
+const router = Router();
 
 /** GET analytics for a specific form by ID */
-router.get("/ai/:id", authenticate, async (req: RequestWithUser, res):Promise<any> => {
+router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
     const userId = req.user?._id;
     const { id } = req.params;
 
@@ -116,13 +117,12 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res):Promise<an
 
         res.json(analytics);
     } catch (error) {
-        console.error("Error generating analytics:", error.message);
-        res.status(500).json({ message: error.message || "Internal server error" });
+        handleError(res, 500, "Error generating analytics", error);
     }
 });
 
 /** POST to update analytics for a specific form */
-router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res):Promise<any> => {
+router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
     const userId = req.user?._id;
     const { id } = req.params;
 
@@ -144,10 +144,7 @@ router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res):Prom
 
         if (analytics) {
             // Update existing analytics
-            analytics.overall = aiResponse.overall;
-            analytics.next_steps = aiResponse.next_steps;
-            analytics.key_conclusions = aiResponse.key_conclusions;
-            analytics.updatedOn = new Date();
+            Object.assign(analytics, aiResponse, { updatedOn: new Date() });
             await analytics.save();
         } else {
             // Create new analytics
@@ -162,8 +159,7 @@ router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res):Prom
 
         res.json(analytics);
     } catch (error) {
-        console.error("Error updating analytics:", error.message);
-        res.status(500).json({ message: error.message || "Internal server error" });
+        handleError(res, 500, "Error updating analytics", error);
     }
 });
 

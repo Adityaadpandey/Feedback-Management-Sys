@@ -5,91 +5,98 @@ import Form from "../models/Form"; // Your Form model
 
 const router = Router();
 
+
+// Centralized error handler to reduce redundancy
+const handleError = (res, statusCode: number, message: string, error?: any) => {
+    console.error(error); // Log error details for debugging
+    res.status(statusCode).json({ message, error });
+};
+
 // form creation with validation
 router.post(
-  "/create",
-  authenticate,
-  [
-    body("title").notEmpty().withMessage("Title is required"),
-    body("questions").isArray().withMessage("Questions must be an array"),
-    body("questions.*.questionText")
-      .notEmpty()
-      .withMessage("Each question must have text"),
-    body("questions.*.questionType")
-      .isIn([
-        "short-answer",
-        "paragraph",
-        "multiple-choice",
-        "checkbox",
-        "dropdown",
-        "file-upload",
-        "date",
-        "time",
-        "rating",
-        "linear-scale",
-        "matrix",
-      ])
-      .withMessage("Invalid question type"),
-    body("questions.*.options")
-      .optional()
-      .isArray()
-      .withMessage("Options must be an array for multiple-choice and similar question types"),
-  ],
-  async (req, res) => {
-    // Validate request body
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    "/create",
+    authenticate,
+    [
+        body("title").notEmpty().withMessage("Title is required"),
+        body("questions").isArray().withMessage("Questions must be an array"),
+        body("questions.*.questionText")
+            .notEmpty()
+            .withMessage("Each question must have text"),
+        body("questions.*.questionType")
+            .isIn([
+                "short-answer",
+                "paragraph",
+                "multiple-choice",
+                "checkbox",
+                "dropdown",
+                "file-upload",
+                "date",
+                "time",
+                "rating",
+                "linear-scale",
+                "matrix",
+            ])
+            .withMessage("Invalid question type"),
+        body("questions.*.options")
+            .optional()
+            .isArray()
+            .withMessage("Options must be an array for multiple-choice and similar question types"),
+    ],
+    async (req, res) => {
+        // Validate request body
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        try {
+            // Use the authenticated user's ID
+            const { _id: userId } = req.user._id;   // from authenticate middleware
+
+            const {
+                title,
+                description,
+                questions,
+                collaborators,
+                theme,
+                isPublic,
+                responseLimit,
+                timer,
+            } = req.body;
+
+            // Create a new form
+            const newForm = new Form({
+                title,
+                description,
+                createdBy: userId, // Use authenticated user's ID as `createdBy`
+                collaborators,
+                theme,
+                isPublic,
+                responseLimit,
+                timer,
+                questions,
+            });
+
+            // Save the form to the database
+            await newForm.save();
+
+            res.status(201).json({
+                message: "Form created successfully",
+                form: newForm,
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                message: "Internal server error",
+                error,
+            });
+        }
     }
-
-    try {
-      // Use the authenticated user's ID
-      const { _id: userId } = req.user._id;   // from authenticate middleware
-
-      const {
-        title,
-        description,
-        questions,
-        collaborators,
-        theme,
-        isPublic,
-        responseLimit,
-        timer,
-      } = req.body;
-
-      // Create a new form
-      const newForm = new Form({
-        title,
-        description,
-        createdBy: userId, // Use authenticated user's ID as `createdBy`
-        collaborators,
-        theme,
-        isPublic,
-        responseLimit,
-        timer,
-        questions,
-      });
-
-      // Save the form to the database
-      await newForm.save();
-
-      res.status(201).json({
-        message: "Form created successfully",
-        form: newForm,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        message: "Internal server error",
-        error,
-      });
-    }
-  }
 );
 
 
 // Get form by ID and share it
-router.get('/get/:id', async (req, res):Promise<any> => {
+router.get('/get/:id', async (req, res): Promise<any> => {
     try {
         const { id } = req.params;
         const form = await Form.findById(id);
@@ -110,17 +117,14 @@ router.get('/get/:id', async (req, res):Promise<any> => {
         // Return the form
         res.json(form);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Internal server error",
-            error
-        });
+        handleError(res, 500, "Internal server error", error);
+
     }
 });
 
 
 // Update form by ID
-router.put('/update/:id', authenticate, async (req:any, res):Promise<any> => {
+router.put('/update/:id', authenticate, async (req: any, res): Promise<any> => {
     try {
         const { id } = req.params;
         const form = await Form.findById(id);
@@ -144,18 +148,15 @@ router.put('/update/:id', authenticate, async (req:any, res):Promise<any> => {
                 .body, { new: true });
         res.json(updatedForm);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Internal server error",
-            error
-        });
+        handleError(res, 500, "Internal server error", error);
+
     }
 }
 );
 
 
 // Delete form by ID
-router.delete('/delete/:id', authenticate, async (req:any, res):Promise<any> => {
+router.delete('/delete/:id', authenticate, async (req: any, res): Promise<any> => {
     try {
         const { id } = req.params;
         const form = await Form.findById(id)
@@ -167,7 +168,7 @@ router.delete('/delete/:id', authenticate, async (req:any, res):Promise<any> => 
             });
         }
         // Check if the user is the creator of the form
-        if (form.createdBy.toString()!== userId.toString()) {
+        if (form.createdBy.toString() !== userId.toString()) {
             return res.status(403).json({
                 message: "You are not authorized to delete this form"
             });
@@ -176,11 +177,8 @@ router.delete('/delete/:id', authenticate, async (req:any, res):Promise<any> => 
         await Form.findByIdAndDelete(id);
         res.json({ message: "Form deleted successfully" });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Internal server error",
-            error
-        });
+        handleError(res, 500, "Internal server error", error);
+
     }
 });
 
