@@ -2,9 +2,9 @@
 
     TODO: Footer component
 
-    TODO: adding Gemini comp with admin component and push btn and fetch
+    TODO: Add the payment gateway
 
-    TODO: Add the user type feature for paid and free users
+    TODO: adding Gemini comp with admin component and push btn and fetch
 
     TODO: Tour Guide for new users
 
@@ -12,11 +12,15 @@
 
 ## Done by Now
 
-    TODO: Add the user type feature for paid and free users in backend
+    Done: Add the user type feature for paid and free users
 
-    TODO: Analytics of the form -> Analytics/page.tsx [17/12]
+    DONE: Added the pricing component
 
-    TODO: if the user is there then show their name -> response-list.tsx
+    DONE: Add the user type feature for paid and free users in backend
+
+    DONE: Analytics of the form -> Analytics/page.tsx [17/12]
+
+    DONE: if the user is there then show their name -> response-list.tsx
     `{response.submittedBy}` [16/12]
 
-    TODO: AI integration in form builder using Gemini [16/12]
+    DONE: AI integration in form builder using Gemini [16/12]

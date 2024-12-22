@@ -68,7 +68,10 @@ export function PlanCard({
             popular ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80"
                   )}
                   onClick={() => console.log(name)}
-        >
+                  //   TODO: add the functionality to redirect to the payment page
+                  
+              >
+
           Get Started
         </Button>
 

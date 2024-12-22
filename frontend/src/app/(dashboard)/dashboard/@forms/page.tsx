@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Toaster } from "@/components/ui/toaster";
 import { deleteFormForDashboard, fetchFormsForDashboard } from "@/lib/api/dashboard";
 import { FormTitle } from "@/types/form";
 import { ArrowRight, FileText, PlusCircleIcon, Share2, Trash2 } from "lucide-react";
@@ -98,50 +97,50 @@ export default function FormsPage() {
                         {title_forms.length > 0 ? (
                             title_forms.map((form) => (
                                 <Card key={form._id} className="p-4 hover:bg-accent/50 transition-colors">
-                                   <div className="flex items-center justify-between">
-    <div className="flex items-center space-x-3">
-        <FileText className="h-5 w-5 text-primary" />
-        <div>
-            <h3 className="font-medium text-foreground">{form.title}</h3>
-            <p className="text-sm text-muted-foreground">ID: {form._id}</p>
-        </div>
-    </div>
-    <div className="flex items-center space-x-2">
-        <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-                const link = `${window.location.origin}/form/${form._id}`;
-                navigator.clipboard.writeText(link);
-                console.log("Copied link to clipboard: ", link);
-                toast.success("Link copied to clipboard. You can now share this link with your users");
-            }}
-            className="hover:bg-primary hover:text-primary-foreground"
-        >
-            <Share2 className="h-5 w-5" />
-        </Button>
-        <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => openDeleteConfirmation(form._id)}
-            className="hover:bg-primary hover:text-primary-foreground"
-        >
-            <Trash2 className="h-5 w-5" />
-        </Button>
-        <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-                handleViewResponses(form._id);
-                toast.success("Please select");
-            }}
-            className="hover:bg-primary hover:text-primary-foreground"
-        >
-            View Responses
-            <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-    </div>
-</div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                            <FileText className="h-5 w-5 text-primary" />
+                                            <div>
+                                                <h3 className="font-medium text-foreground">{form.title}</h3>
+                                                <p className="text-sm text-muted-foreground">ID: {form._id}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    const link = `${window.location.origin}/form/${form._id}`;
+                                                    navigator.clipboard.writeText(link);
+                                                    console.log("Copied link to clipboard: ", link);
+                                                    toast.success("Link copied to clipboard. You can now share this link with your users");
+                                                }}
+                                                className="hover:bg-primary hover:text-primary-foreground"
+                                            >
+                                                <Share2 className="h-5 w-5" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => openDeleteConfirmation(form._id)}
+                                                className="hover:bg-primary hover:text-primary-foreground"
+                                            >
+                                                <Trash2 className="h-5 w-5" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => {
+                                                    handleViewResponses(form._id);
+                                                    toast.success("Please select");
+                                                }}
+                                                className="hover:bg-primary hover:text-primary-foreground"
+                                            >
+                                                View Responses
+                                                <ArrowRight className="ml-2 h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
 
                                 </Card>
                             ))
