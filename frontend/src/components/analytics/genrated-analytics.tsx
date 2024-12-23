@@ -1,9 +1,9 @@
 import { getFormAnalyticsByAI, getFormAnalyticsByAIforce } from '@/lib/api/analytics';
 import { CheckCircle, List, MessageSquare } from 'lucide-react'; // Import icons
 import { useEffect, useState } from 'react';
+import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { LoadingSpinner } from '../ui/loading-spinner';
-import { Button } from '../ui/button';
 
 const GeneratedAnalytics = ({ responseData }) => {
     const [loading, setLoading] = useState(true);
@@ -42,7 +42,7 @@ const GeneratedAnalytics = ({ responseData }) => {
             const data = await getFormAnalyticsByAIforce(responseData._id);
             setAnalyticsData(data); // Set newly generated data
             setLoading(false); // Reset loading state
-            
+
         } catch (err) {
             console.error('Error regenerating analytics:', err);
             setError('Failed to regenerate analytics. Please try again later.');
@@ -80,7 +80,7 @@ const GeneratedAnalytics = ({ responseData }) => {
     // Render the analytics data once loaded
     return (
         <Card className="p-6 space-y-6 bg-card rounded-lg shadow-lg">
-            <div>
+            <div className='flex justify-between items-center'>
                 <h1 className="text-xl font-semibold text-foreground">Generated Analytics</h1>
                 <Button onClick={regenerateAnalytics} className="mt-2">Regenerate Analytics</Button>
             </div>
