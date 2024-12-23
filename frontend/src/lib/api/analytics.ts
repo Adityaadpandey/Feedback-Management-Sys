@@ -36,7 +36,7 @@ export async function getFormAnalyticsByAI(formId: string): Promise<GeneratedAna
 }
 
 
-export async function getFormAnalyticsByAIforce(formId: string): Promise<any> {
+export async function getFormAnalyticsByAIforce(formId: string): Promise<GeneratedAnalytics> {
     try {
         // Retrieve token from localStorage (or wherever it's stored)
         const token = localStorage.getItem('user'); // Make sure 'user' holds the correct token
@@ -60,4 +60,3 @@ export async function getFormAnalyticsByAIforce(formId: string): Promise<any> {
         throw new Error('Failed to fetch analytics data');
     }
 }
-    
