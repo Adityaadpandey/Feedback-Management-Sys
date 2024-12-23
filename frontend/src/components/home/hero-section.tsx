@@ -3,11 +3,10 @@ import { Button } from "@/components/ui/button";
 import { GradientText } from "@/components/ui/gradient-text";
 import { MovingBorder } from "@/components/ui/moving-border";
 import { Spotlight } from "@/components/ui/spotlight";
+import { useAlert } from "@/hooks/alert-provider";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useRouter } from 'next/navigation';
-import { useState } from "react";
-import Custom_Alert from "../ui/custom-alert";
 import { HeroBadge } from "./hero-badge";
 import { HeroStats } from "./hero-stats";
 import { InteractiveShowcase } from "./InteractiveShowcase";
@@ -15,15 +14,16 @@ import { InteractiveShowcase } from "./InteractiveShowcase";
 export function HeroSection() {
     const router = useRouter()
 
-    const [alert, setAlert] = useState(false)
-    const pushAlert = () => {
-        setAlert(true)
-        setTimeout(() => {
-            setAlert(false)
-        }, 5000)
-    }
+    const { showAlert } = useAlert();
 
-   
+    const pushAlert = () => {
+        showAlert(
+            "Success",
+            "Your operation was successful!",
+            "success",
+        )
+    };
+
 
     return (
         <div className="w-full relative isolate overflow-hidden ">
@@ -72,7 +72,6 @@ export function HeroSection() {
                         <HeroStats />
                     </div>
                 </Spotlight>
-                {alert && <Custom_Alert title="Demo" desc="This is a demo" />}
             </MovingBorder>
 
         </div>

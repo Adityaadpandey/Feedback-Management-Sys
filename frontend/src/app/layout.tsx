@@ -1,6 +1,7 @@
 import Navbar from "@/components/globals/navbar";
 import { ThemeProvider } from "@/components/globals/theme-provider";
 import { ModeToggle } from "@/components/globals/theme-toogle";
+import { AlertProvider } from "@/hooks/alert-provider";
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
@@ -22,15 +23,17 @@ export default function RootLayout({
         <ClerkProvider>
             <html lang="en" suppressHydrationWarning>
                 <body className={font.className}>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange>
-                        <ModeToggle />
-                        <Navbar />
-                        {children}
-                    </ThemeProvider>
+                    <AlertProvider>
+                        <ThemeProvider
+                            attribute="class"
+                            defaultTheme="system"
+                            enableSystem
+                            disableTransitionOnChange>
+                            <ModeToggle />
+                            <Navbar />
+                            {children}
+                        </ThemeProvider>
+                    </AlertProvider>
                 </body>
             </html>
         </ClerkProvider>

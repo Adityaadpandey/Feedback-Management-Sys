@@ -1,63 +1,90 @@
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 
+// Define alert type for props
 interface CustomAlertProps {
-  title: string;
-  desc: string;
-  duration?: number; // Duration for auto-dismissal in milliseconds
-  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left"; // Position of the toast
-  onClose?: () => void; // Callback when the toast is closed
+    title: string;
+    message: string;
+    type: "success" | "error" | "info" | "warning"; // Define alert types
+    onClose: () => void;
 }
 
-const Custom_Alert = ({
-  title,
-  desc,
-  duration = 3000, // Default to 3 seconds
-  position = "bottom-right", // Default position
-  onClose,
-}: CustomAlertProps) => {
-  const [show, setShow] = useState(true);
+// Map alert types to styles using your Tailwind color scheme
+const alertStyles = {
+    success: "bg-background text-primary-foreground",
+    error: "bg-destructive text-destructive-foreground",
+    info: "bg-accent text-accent-foreground",
+    warning: "bg-secondary text-secondary-foreground",
 
-  // Auto-dismiss after the specified duration
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShow(false);
-      if (onClose) onClose(); // Call the onClose callback if provided
-    }, duration);
-
-    return () => clearTimeout(timer); // Clean up the timer on unmount
-  }, [duration, onClose]);
-
-  // Handle the close button click
-  const handleClose = () => {
-    setShow(false);
-    if (onClose) onClose();
-  };
-
-  if (!show) return null;
-
-  // Dynamically set the position classes
-  const positionClasses = {
-    "top-right": "top-4 right-4",
-    "top-left": "top-4 left-4",
-    "bottom-right": "bottom-4 right-4",
-    "bottom-left": "bottom-4 left-4",
-  };
-
-  return (
-    <div
-      className={`fixed z-50 ${positionClasses[position]} bg-red-100 border min-w-[200px] border-red-400 text-red-700 px-4 py-3 rounded shadow-md transform transition-all duration-300 ease-in-out opacity-100`}
-    >
-      <strong className="font-bold">{title}</strong>
-      <br />
-      <span className="block sm:inline">{desc}</span>
-      <button
-        onClick={handleClose}
-        className="absolute top-2 right-2 text-red-700 bg-transparent border-none text-xl cursor-pointer"
-      >
-        &times;
-      </button>
-    </div>
-  );
 };
 
-export default Custom_Alert;
+const CustomAlert = ({ title, message, type, onClose }: CustomAlertProps) => {
+    const [show, setShow] = useState(true);
+    const [timeLeft, setTimeLeft] = useState(5); // 5 seconds countdown
+    const [progress, setProgress] = useState(100); // Track progress for the progress bar
+
+    // Countdown timer for 5 seconds with smooth progress
+    useEffect(() => {
+        if (timeLeft > 0 && show) {
+            const countdown = setInterval(() => {
+                setTimeLeft((prevTime) => prevTime - 1);
+                setProgress((prevProgress) => prevProgress - 20); // Adjust progress
+            }, 1000); // Update every second
+
+            return () => clearInterval(countdown); // Cleanup interval
+        } else if (timeLeft === 0) {
+            handleClose();
+        }
+    }, [timeLeft, show]);
+
+    const handleClose = () => {
+        setShow(false); // Fade out the alert
+        setTimeout(() => {
+            onClose();
+        }, 300); // Match transition duration
+    };
+
+    return (
+        <div
+            className={clsx(
+                "fixed z-50 w-80 p-5 rounded-lg shadow-lg transition-transform duration-300",
+                show ? "translate-x-0 opacity-100" : "translate-x-full opacity-0", // Slide-out effect
+                "right-4 bottom-4",
+                alertStyles[type], // Apply styles based on alert type
+                "bg-opacity-90 animate-slide-in" // Smooth opacity and slide-in animation
+            )}
+            role="alert" // Make it accessible for screen readers
+        >
+            <div className="flex justify-between items-center space-x-4">
+                <div>
+                    <strong className="text-xl text-primary-foreground font-medium">{title}</strong>
+                    <p className="text-sm  text-opacity-80 mt-1">{message}</p>
+                </div>
+                <button
+                    className="text-white text-2xl hover:text-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                    onClick={() => {
+                        setShow(false);
+                        onClose();
+                    }}
+                    aria-label="Close alert"
+                >
+                    &times;
+                </button>
+            </div>
+
+            {/* Countdown Progress Bar with Gradient */}
+            <div className="mt-3 h-1 bg-muted bg-opacity-20 rounded-full">
+                <div
+                    className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                    style={{
+                        width: `${progress}%`, // Update width based on progress
+                        transition: "width 1s linear", // Smooth transition
+                    }}
+                />
+            </div>
+
+        </div>
+    );
+};
+
+export default CustomAlert;
