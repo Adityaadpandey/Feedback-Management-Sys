@@ -6,12 +6,15 @@ import { FormData } from "@/types/form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Form } from "../form";
+import { useAlert } from "@/hooks/alert-provider";
 
 interface DynamicFormProps {
     formData: FormData;
 }
 
 export function DynamicForm({ formData }: DynamicFormProps) {
+    const { showAlert } = useAlert();
+
 
     const router = useRouter();
     const handleSubmit = async (responses: Record<string, any>) => {
@@ -29,7 +32,11 @@ export function DynamicForm({ formData }: DynamicFormProps) {
             await submitFormResponse(payload);
             router.push(`/form/success`);
         } catch {
-            toast.error("Failed to submit the form");
+            showAlert(
+                "Error!",
+                "Failed to submit the form",
+                "error",
+            );
         }
     };
 

@@ -3,14 +3,16 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAlert } from "@/hooks/alert-provider";
 import { deleteFormForDashboard, fetchFormsForDashboard } from "@/lib/api/dashboard";
 import { FormTitle } from "@/types/form";
 import { ArrowRight, FileText, PlusCircleIcon, Share2, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from 'sonner';
 
 export default function FormsPage() {
+    const { showAlert } = useAlert();
+
     const router = useRouter();
     const [delConfirmationView, setDelConfirmationView] = useState<string | null>(null);
     const [title_forms, setForms] = useState<FormTitle[]>([]); // Ensure it's initialized as an array.
@@ -113,7 +115,14 @@ export default function FormsPage() {
                                                     const link = `${window.location.origin}/form/${form._id}`;
                                                     navigator.clipboard.writeText(link);
                                                     console.log("Copied link to clipboard: ", link);
-                                                    toast.success("Link copied to clipboard. You can now share this link with your users");
+
+
+                                                    showAlert(
+                                                        "Success",
+                                                        "Link copied to clipboard. You can now share this link with your users",
+                                                        "success",
+                                                    )
+
                                                 }}
                                                 className="hover:bg-primary hover:text-primary-foreground"
                                             >
@@ -132,7 +141,6 @@ export default function FormsPage() {
                                                 size="sm"
                                                 onClick={() => {
                                                     handleViewResponses(form._id);
-                                                    toast.success("Please select");
                                                 }}
                                                 className="hover:bg-primary hover:text-primary-foreground"
                                             >
