@@ -20,7 +20,7 @@ export function HeroSection() {
         showAlert(
             "Success",
             "Your operation was successful!",
-            "success",
+            "error",
         )
     };
 

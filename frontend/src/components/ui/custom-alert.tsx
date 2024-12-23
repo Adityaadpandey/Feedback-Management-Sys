@@ -73,15 +73,32 @@ const CustomAlert = ({ title, message, type, onClose }: CustomAlertProps) => {
             </div>
 
             {/* Countdown Progress Bar with Gradient */}
-            <div className="mt-3 h-1 bg-muted bg-opacity-20 rounded-full">
+            <div
+                className={clsx(
+                    "mt-3 h-1 bg-opacity-20 rounded-full",
+                    {
+                        "bg-muted": type !== "error", // Default muted background for non-error types
+                        "bg-destructive": type === "error", // Destructive background for error
+                    }
+                )}
+            >
                 <div
-                    className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                    className={clsx(
+                        "h-full rounded-full",
+                        {
+                            "bg-gradient-to-r from-primary to-accent": type === "success", // Success gradient
+                            "bg-gradient-to-r from-blue-500 to-primary": type === "info", // Info gradient
+                            "bg-gradient-to-r from-yellow-400 to-accent": type === "warning", // Warning gradient
+                            "bg-gradient-to-r from-white to-red-700": type === "error", // Error gradient
+                        }
+                    )}
                     style={{
                         width: `${progress}%`, // Update width based on progress
                         transition: "width 1s linear", // Smooth transition
                     }}
                 />
             </div>
+
 
         </div>
     );
