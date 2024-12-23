@@ -1,30 +1,55 @@
-import { getFormAnalyticsByAI } from '@/lib/api/analytics';
+import { getFormAnalyticsByAI, getFormAnalyticsByAIforce } from '@/lib/api/analytics';
 import { CheckCircle, List, MessageSquare } from 'lucide-react'; // Import icons
 import { useEffect, useState } from 'react';
 import { Card } from '../ui/card';
 import { LoadingSpinner } from '../ui/loading-spinner';
+import { Button } from '../ui/button';
 
 const GeneratedAnalytics = ({ responseData }) => {
     const [loading, setLoading] = useState(true);
     const [analyticsData, setAnalyticsData] = useState(null);
     const [error, setError] = useState(null);
+    const [showAIForceAnalytics, setShowAIForceAnalytics] = useState(false);
 
+    // Function to fetch analytics data
+    const fetchAnalytics = async () => {
+        setLoading(true); // Reset loading state
+        setError(null); // Reset error
+        setAnalyticsData(null); // Reset analytics data
+        try {
+            const data = await getFormAnalyticsByAI(responseData._id); // Fetch analytics using API
+            setAnalyticsData(data); // Set the fetched data into the state
+        } catch (err) {
+            console.error('Error generating analytics:', err);
+            setError('Failed to load analytics data. Please try again later.'); // Set error message
+        } finally {
+            setLoading(false); // Reset loading state after fetching
+        }
+    };
+
+    // Fetch analytics data on initial load or when responseData changes
     useEffect(() => {
-        const fetchAnalytics = async () => {
-            try {
-                const data = await getFormAnalyticsByAI(responseData._id);
-                setAnalyticsData(data);
-            } catch (err) {
-                console.error('Error generating analytics:', err);
-                setError('Failed to load analytics data. Please try again later.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchAnalytics();
-    }, [responseData]);
+    }, [responseData]); // Only re-fetch when responseData changes
 
+    // Function to handle regeneration of analytics
+    const regenerateAnalytics = async () => {
+        setLoading(true); // Set loading state
+        setError(null); // Reset error
+        setAnalyticsData(null); // Reset analytics data
+        try {
+            // Call to regenerate analytics via the force API
+            const data = await getFormAnalyticsByAIforce(responseData._id);
+            setAnalyticsData(data); // Set newly generated data
+            setLoading(false); // Reset loading state
+            
+        } catch (err) {
+            console.error('Error regenerating analytics:', err);
+            setError('Failed to regenerate analytics. Please try again later.');
+        }
+    };
+
+    // Display loading spinner
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-8">
@@ -34,6 +59,7 @@ const GeneratedAnalytics = ({ responseData }) => {
         );
     }
 
+    // Handle error state
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center p-8">
@@ -42,6 +68,7 @@ const GeneratedAnalytics = ({ responseData }) => {
         );
     }
 
+    // Handle case where no analytics data is available
     if (!analyticsData) {
         return (
             <div className="text-center p-8">
@@ -50,9 +77,13 @@ const GeneratedAnalytics = ({ responseData }) => {
         );
     }
 
+    // Render the analytics data once loaded
     return (
         <Card className="p-6 space-y-6 bg-card rounded-lg shadow-lg">
-            <h1 className="text-xl font-semibold text-foreground">Generated Analytics</h1>
+            <div>
+                <h1 className="text-xl font-semibold text-foreground">Generated Analytics</h1>
+                <Button onClick={regenerateAnalytics} className="mt-2">Regenerate Analytics</Button>
+            </div>
 
             {/* Overall Feedback */}
             <div>

@@ -136,6 +136,7 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response):
 router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
     const userId = req.user?._id;
     const { id } = req.params;
+    console.log("id", id, "userId", userId);
 
     if (!id) return res.status(400).json({ message: "Form ID is required" });
     if (!userId) return res.status(401).json({ message: "Authentication required" });
