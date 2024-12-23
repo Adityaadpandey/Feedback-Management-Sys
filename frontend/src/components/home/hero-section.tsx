@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { GradientText } from "@/components/ui/gradient-text";
 import { MovingBorder } from "@/components/ui/moving-border";
@@ -7,12 +6,25 @@ import { Spotlight } from "@/components/ui/spotlight";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import Custom_Alert from "../ui/custom-alert";
 import { HeroBadge } from "./hero-badge";
 import { HeroStats } from "./hero-stats";
 import { InteractiveShowcase } from "./InteractiveShowcase";
 
 export function HeroSection() {
     const router = useRouter()
+
+    const [alert, setAlert] = useState(false)
+    const pushAlert = () => {
+        setAlert(true)
+        setTimeout(() => {
+            setAlert(false)
+        }, 5000)
+    }
+
+   
+
     return (
         <div className="w-full relative isolate overflow-hidden ">
             <MovingBorder className="rounded-[30px] overflow-hidden ">
@@ -30,14 +42,19 @@ export function HeroSection() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-fade-in [--animation-delay:400ms]">
-                        <Button size="lg"
+                        <Button
+                            size="lg"
                             className="group"
                             onClick={() => { router.push('/dashboard') }}
                         >
                             <span className="mr-2">Get Started</span>
                             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                         </Button>
-                        <Button size="lg" variant="outline" className="group">
+                        <Button
+                            size="lg"
+                            variant="outline"
+                            onClick={() => { pushAlert() }}
+                            className="group">
                             <Sparkles className="mr-2 w-4 h-4 transition-all group-hover:text-primary" />
                             View Demo
                         </Button>
@@ -52,10 +69,12 @@ export function HeroSection() {
                         >
                             <InteractiveShowcase />
                         </motion.div>
-                    <HeroStats />
+                        <HeroStats />
                     </div>
                 </Spotlight>
+                {alert && <Custom_Alert title="Demo" desc="This is a demo" />}
             </MovingBorder>
+
         </div>
     );
 }
