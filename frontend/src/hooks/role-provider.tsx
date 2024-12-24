@@ -3,7 +3,7 @@
 import CryptoJS from 'crypto-js';
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
 
-const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY 
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY
 
 // Define types for RoleContext
 interface RoleContextType {
