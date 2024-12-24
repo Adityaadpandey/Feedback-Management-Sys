@@ -1,6 +1,9 @@
 'use client'
 
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState, useEffect } from 'react';
+import CryptoJS from 'crypto-js';
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
+
+const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY 
 
 // Define types for RoleContext
 interface RoleContextType {
@@ -31,22 +34,35 @@ export const RoleProvider = ({
     const [subscriptionPlan, setSubscriptionPlan] = useState<string | null>(initialSubscriptionPlan);
     const [aiGenerationLimit, setAiGenerationLimit] = useState<number | null>(initialAiGenerationLimit);
 
-    // On component mount, load state from localStorage
+    // Encrypt data before saving to localStorage
+    const encryptData = (data: string | number | null) => {
+        return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
+    };
+
+    // Decrypt data from localStorage
+    const decryptData = (data: string | null) => {
+        if (!data) return null;
+        const bytes = CryptoJS.AES.decrypt(data, SECRET_KEY);
+        const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+        return decryptedData ? JSON.parse(decryptedData) : null;
+    };
+
+    // On component mount, load state from localStorage and decrypt it
     useEffect(() => {
         const storedRole = localStorage.getItem('role');
         const storedPlan = localStorage.getItem('subscriptionPlan');
         const storedLimit = localStorage.getItem('aiGenerationLimit');
 
-        if (storedRole) setRole(storedRole);
-        if (storedPlan) setSubscriptionPlan(storedPlan);
-        if (storedLimit) setAiGenerationLimit(parseInt(storedLimit));
+        if (storedRole) setRole(decryptData(storedRole));
+        if (storedPlan) setSubscriptionPlan(decryptData(storedPlan));
+        if (storedLimit) setAiGenerationLimit(decryptData(storedLimit));
     }, []);
 
-    // Save state to localStorage whenever it changes
+    // Save encrypted state to localStorage whenever it changes
     useEffect(() => {
-        if (role) localStorage.setItem('role', role);
-        if (subscriptionPlan) localStorage.setItem('subscriptionPlan', subscriptionPlan);
-        if (aiGenerationLimit) localStorage.setItem('aiGenerationLimit', aiGenerationLimit.toString());
+        if (role) localStorage.setItem('role', encryptData(role));
+        if (subscriptionPlan) localStorage.setItem('subscriptionPlan', encryptData(subscriptionPlan));
+        if (aiGenerationLimit) localStorage.setItem('aiGenerationLimit', encryptData(aiGenerationLimit));
     }, [role, subscriptionPlan, aiGenerationLimit]);
 
     return (
