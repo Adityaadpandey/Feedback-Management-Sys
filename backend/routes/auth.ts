@@ -52,12 +52,17 @@ router.post("/register", async (req, res):Promise<any> => {
 
         const newUser = new User({ name, email, phone, role, clerkId });
         await newUser.save();
+        const user = await User.findOne({ clerkId });
 
-        const accessToken = createJwtToken(newUser);
+        const accessToken = createJwtToken(user);
 
         res.status(201).json({
             accessToken: accessToken,
+            role: user.role,
+            subscriptionPlan: user.subscription_plan,
+            ai_generation_limit: user.ai_generation_limit,
             message: "User registered successfully",
+
         });
     } catch (error) {
         handleError(res, 500, "Internal server error", error);
@@ -74,7 +79,12 @@ router.post("/login", async (req, res):Promise<any> => {
 
         const accessToken = createJwtToken(user);
 
-        res.status(200).json({ accessToken });
+        res.status(200).json({
+            accessToken: accessToken,
+            role: user.role,
+            subscriptionPlan: user.subscription_plan,
+            ai_generation_limit: user.ai_generation_limit,
+        });
     } catch (error) {
         handleError(res, 500, "Internal server error", error);
     }
@@ -115,8 +125,9 @@ router.get("/upgrade/:version", authenticate, async (req: RequestWithUser, res: 
         res.status(200).json({
             message: "User role updated successfully",
             role: updatedUser.role,
+            ai_generation_limit: updatedUser.ai_generation_limit,
             subscriptionPlan: updatedUser.subscription_plan,
-            
+
         });
     } catch (error) {
         handleError(res, 500, "Internal server error", error);
