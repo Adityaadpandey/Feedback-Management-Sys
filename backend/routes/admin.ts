@@ -91,6 +91,14 @@ async function decrementUserLimit(userId: string): Promise<void> {
     });
 }
 
+
+// TODO: Leaveing this for now but will se if needed afterwards
+async function checkAmountofToken(userId:string): Promise<void>{
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User not found");
+    if (user.ai_generation_limit <= 0) throw new Error("Token limit exceeded");
+}
+
 const router = Router();
 
 /** GET analytics for a specific form by ID */
@@ -100,6 +108,7 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response):
 
     if (!id) return res.status(400).json({ message: "Form ID is required" });
     if (!userId) return res.status(401).json({ message: "Authentication required" });
+
 
     try {
         // Check if analytics already exist
