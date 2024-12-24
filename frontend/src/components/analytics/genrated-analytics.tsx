@@ -9,7 +9,6 @@ const GeneratedAnalytics = ({ responseData }) => {
     const [loading, setLoading] = useState(true);
     const [analyticsData, setAnalyticsData] = useState(null);
     const [error, setError] = useState(null);
-    const [showAIForceAnalytics, setShowAIForceAnalytics] = useState(false);
 
     // Function to fetch analytics data
     const fetchAnalytics = async () => {
