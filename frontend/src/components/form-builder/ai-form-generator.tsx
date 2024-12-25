@@ -1,14 +1,15 @@
 "use client";
 
 import { useAlert } from "@/hooks/alert-provider";
+import { useRole } from "@/hooks/role-provider";
+import { getAiToken, sendAiToken } from "@/lib/api/admin";
 import { generateForm } from "@/lib/gemini/client";
 import { FormQuestion } from "@/types/form";
-import { Wand2, Lock } from "lucide-react";
+import { Lock, Wand2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Textarea } from "../ui/textarea";
-import { useRole } from "@/hooks/role-provider";
 
 interface AIFormGeneratorProps {
     onFormGenerated: (title: string, description: string, questions: FormQuestion[]) => void;
@@ -16,7 +17,7 @@ interface AIFormGeneratorProps {
 }
 
 export function AIFormGenerator({ onFormGenerated, className }: AIFormGeneratorProps) {
-    const { role, aiGenerationLimit } = useRole();
+    const { role, aiGenerationLimit, setAiGenerationLimit } = useRole();
     const { showAlert } = useAlert();
     const [prompt, setPrompt] = useState("");
     const [loading, setLoading] = useState(false);
@@ -44,7 +45,12 @@ export function AIFormGenerator({ onFormGenerated, className }: AIFormGeneratorP
             }));
 
             onFormGenerated(formData.title, formData.description || "", questions);
+
             showAlert("Success!", "Form generated successfully!", "success");
+            await sendAiToken(); // Send the AI token to the server for admin
+            const token = await getAiToken();
+            console.log(token);
+            setAiGenerationLimit(token);
             setPrompt("");
         } catch {
             showAlert("Error!", "Failed to generate form. Please try again.", "error");
@@ -80,8 +86,8 @@ export function AIFormGenerator({ onFormGenerated, className }: AIFormGeneratorP
                     <div className="flex flex-col items-center justify-center space-y-4 text-center">
                         <Lock className="h-12 w-12 text-gray-500" />
                         <p className="text-xl font-semibold text-gray-600">Upgrade Your Plan</p>
-                            <p className="text-sm text-gray-400">You need to upgrade your subscription plan to generate AI forms.</p>
-                            {/* TODO: add the uprade now thing */}
+                        <p className="text-sm text-gray-400">You need to upgrade your subscription plan to generate AI forms.</p>
+                        {/* TODO: add the uprade now thing */}
                         <Button
                             onClick={() => showAlert("Info", "Please upgrade your plan to access this feature.", "info")}
                             className="mt-4 w-full"

@@ -192,5 +192,21 @@ router.get('/checktokens', authenticate,  async (req: RequestWithUser, res: Resp
 });
 
 
+router.post('/sendtokens', authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
+    const userId = req.user?._id;
+
+    if (!userId) return res.status(401).json({ message: "Authentication required" });
+    try {
+        const user = await User.findById(userId);
+        if (!user) throw new Error("User not found");
+        await User.findByIdAndUpdate(userId, {
+            ai_generation_limit: user.ai_generation_limit - 1,
+        });
+        res.status(200).json({ message: "Tokens sent successfully" });
+    } catch (error) {
+        handleError(res, 500, "Error sending tokens", error);
+    }
+})
+
 
 export const admin = router;
