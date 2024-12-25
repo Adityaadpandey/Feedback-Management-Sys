@@ -83,83 +83,132 @@ router.get("/titles", authenticate, async (req: RequestWithUser, res): Promise<a
 
 // Function to convert form data and responses to XLSX
 
-// Helper function to convert form and responses to XLSX
+// Helper function to convert form and responses into an XLSX buffer
 async function convertToXlsx(form: any, responses: any[]): Promise<Buffer> {
     const workbook = XLSX.utils.book_new();
 
-    // Validate form structure
     if (!form.questions || !Array.isArray(form.questions)) {
         throw new Error("Invalid form structure: 'questions' not found or not an array.");
     }
 
-    // Prepare headers (question texts)
-    const headers = form.questions.map((q: any) => q.questionText);
+    const headers: string[] = [];
+    const data: any[] = [];
 
-    // Prepare rows (responses)
-    const data = responses.map((response: any) => {
-        return form.questions.map((question: any) => {
-            // Debug: Log question ID and responses
-            console.log("Question ID:", question._id, "Response Data:", response.responses);
-
-            // Find the corresponding answer
-            const answer = response.responses.find((r: any) => String(r.questionId) === String(question._id));
-            if (answer) {
-                // Handle multiple-choice answers
-                return Array.isArray(answer.answer) ? answer.answer.join(", ") : answer.answer;
-            }
-            return 'N/A'; // Default for unanswered questions
-        });
+    form.questions.forEach((question: any) => {
+        if (question.type === "matrix") {
+            question.rows.forEach((row: string) => {
+                question.columns.forEach((column: string) => {
+                    headers.push(`${question.questionText} (${row} - ${column})`);
+                });
+            });
+        } else {
+            headers.push(question.questionText);
+        }
     });
 
-    // Debug: Log headers and data
+    responses.forEach((response: any) => {
+        const rowData: string[] = [];
+
+        form.questions.forEach((question: any) => {
+            const answer = response.responses.find(
+                (r: any) => String(r.questionId) === String(question._id)
+            );
+
+            if (answer) {
+                if (question.type === "matrix") {
+                    question.rows.forEach((row: string) => {
+                        question.columns.forEach((column: string) => {
+                            const cell = answer.answer.find(
+                                (a: any) => a.row === row && a.column === column
+                            );
+                            rowData.push(cell ? JSON.stringify(cell.value) : "N/A");
+                        });
+                    });
+                } else if (typeof answer.answer === "object") {
+                    // Serialize non-matrix object answers to JSON
+                    rowData.push(JSON.stringify(answer.answer));
+                } else {
+                    rowData.push(
+                        Array.isArray(answer.answer)
+                            ? answer.answer.join(", ")
+                            : answer.answer || "N/A"
+                    );
+                }
+            } else {
+                if (question.type === "matrix") {
+                    question.rows.forEach(() => {
+                        question.columns.forEach(() => {
+                            rowData.push("N/A");
+                        });
+                    });
+                } else {
+                    rowData.push("N/A");
+                }
+            }
+        });
+
+        data.push(rowData);
+    });
+
     console.log("Headers:", headers);
     console.log("Data Rows:", data);
 
-    // Add headers and data to the worksheet
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Responses");
 
-    // Add worksheet to workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Responses');
-
-    // Generate XLSX buffer
-    return XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+    return XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
 }
 
 
-// API Endpoint to export form responses to XLSX
-router.get("/forms/:formId/export/csv", authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
-    try {
-        const userId = req.user?._id;
-        const formId = req.params.formId;
+// API endpoint to export form responses to XLSX
+router.get(
+    "/forms/:formId/export/csv",
+    authenticate,
+    async (req: any, res: Response): Promise<any> => {
+        try {
+            const userId = req.user?._id;
+            const formId = req.params.formId;
 
-        if (!userId) {
-            return res.status(401).json({ message: "Authentication required." });
+            if (!userId) {
+                return res.status(401).json({ message: "Authentication required." });
+            }
+
+            if (!formId) {
+                return res.status(400).json({ message: "Form ID is required." });
+            }
+
+            // Fetch form and responses
+            const form = await Form.findOne({ _id: formId, createdBy: userId });
+            if (!form) {
+                return res.status(404).json({ message: "Form not found." });
+            }
+
+            const responses = await ResponseModel.find({ formId });
+            if (!responses.length) {
+                return res
+                    .status(404)
+                    .json({ message: "No responses found for this form." });
+            }
+
+            // Convert to XLSX
+            const xlsxBuffer = await convertToXlsx(form, responses);
+
+            // Set headers for XLSX download
+            const filename = `${form.title || "form"}_responses.xlsx`;
+            res.setHeader(
+                "Content-Type",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            );
+            res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+            // Send XLSX file
+            res.send(xlsxBuffer);
+        } catch (error: any) {
+            console.error("Error exporting responses:", error.message);
+            res.status(500).json({ message: "Internal server error.", error: error.message });
         }
-        if (!formId) return res.status(400).json({ message: "Form ID is required." });
-
-        // Fetch the form created by the user
-        const form = await Form.findOne({ _id: formId, createdBy: userId });
-        if (!form) return res.status(404).json({ message: "Form not found." });
-
-        // Fetch all responses for the form
-        const responses = await ResponseModel.find({ formId });
-        if (!responses.length) return res.status(404).json({ message: "No responses found for this form." });
-
-        // Convert form and responses to XLSX
-        const xlsxBuffer = await convertToXlsx(form, responses);
-
-        // Set headers for XLSX download
-        const filename = `${form.title || 'form'}_responses.xlsx`;
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-
-        // Send XLSX file
-        res.send(xlsxBuffer);
-    } catch (error: any) {
-        console.error("Error exporting responses:", error.message);
-        res.status(500).json({ message: "Internal server error.", error: error.message });
     }
-});
+);
 
 
 // GET all looged users from the form
