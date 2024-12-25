@@ -1,5 +1,5 @@
 import { getFormAnalyticsByAI, getFormAnalyticsByAIforce } from '@/lib/api/analytics';
-import { CheckCircle, List, MessageSquare } from 'lucide-react'; // Import icons
+import { CheckCircle, List, MessageSquare, Lock } from 'lucide-react'; // Import icons
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
@@ -20,7 +20,7 @@ const GeneratedAnalytics = ({ responseData }) => {
             setAnalyticsData(data); // Set the fetched data into the state
         } catch (err) {
             console.error('Error generating analytics:', err);
-            setError('Failed to load analytics data. Please try again later.'); // Set error message
+            setError(err?.message || 'Failed to load analytics data. Please try again later.'); // Set error message
         } finally {
             setLoading(false); // Reset loading state after fetching
         }
@@ -41,10 +41,9 @@ const GeneratedAnalytics = ({ responseData }) => {
             const data = await getFormAnalyticsByAIforce(responseData._id);
             setAnalyticsData(data); // Set newly generated data
             setLoading(false); // Reset loading state
-
         } catch (err) {
-            console.error('Error regenerating analytics:', err);
-            setError('Failed to regenerate analytics. Please try again later.');
+            console.error('Error regenerating analytics:', err.response.data.error.message);
+            setError(err?.message || 'Failed to regenerate analytics. Please try again later.');
         }
     };
 
@@ -58,7 +57,23 @@ const GeneratedAnalytics = ({ responseData }) => {
         );
     }
 
-    // Handle error state
+    // Handle error state (AI generation limit exceeded)
+    if (error && error.includes("AI generation limit exceeded")) {
+        return (
+            <div className="flex flex-col items-center justify-center p-8 space-y-4">
+                <div className="w-full h-[300px] flex flex-col items-center justify-center text-center bg-gray-200 border border-dashed border-gray-400 rounded-md">
+                    <Lock className="text-gray-500 w-16 h-16" />
+                    <p className="text-xl font-semibold text-gray-700 mt-4">Upgrade Your Plan</p>
+                    <p className="text-sm text-gray-500">You have reached your AI generation limit. Please upgrade your plan to continue generating analytics.</p>
+                    <Button onClick={() => alert("Upgrade your plan to access this feature")} className="mt-4">
+                        Upgrade Now
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    // Handle other error states
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center p-8">
