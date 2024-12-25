@@ -92,13 +92,6 @@ async function decrementUserLimit(userId: string): Promise<void> {
 }
 
 
-// TODO: Leaveing this for now but will se if needed afterwards
-async function checkAmountofToken(userId:string): Promise<void>{
-    const user = await User.findById(userId);
-    if (!user) throw new Error("User not found");
-    if (user.ai_generation_limit <= 0) throw new Error("Token limit exceeded");
-}
-
 const router = Router();
 
 /** GET analytics for a specific form by ID */
@@ -181,6 +174,20 @@ router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res: Resp
         res.json(analytics);
     } catch (error) {
         handleError(res, 500, "Error updating analytics", error);
+    }
+});
+
+
+// TODO: Leaveing this for now but will se if needed afterwards
+router.get('/checktokens', authenticate,  async (req: RequestWithUser, res: Response): Promise<any> => {
+    const userId = req.user?._id;
+    if (!userId) return res.status(401).json({ message: "Authentication required" });
+    try {
+        const user = await User.findById(userId);
+        if (!user) throw new Error("User not found");
+        res.json({tokens: user.ai_generation_limit});
+    } catch (error) {
+        handleError(res, 500, "Error checking tokens", error);
     }
 });
 
