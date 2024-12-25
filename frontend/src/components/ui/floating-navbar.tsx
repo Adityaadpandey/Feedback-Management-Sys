@@ -20,7 +20,7 @@ export const FloatingNav = ({
     const pathname = usePathname();
     const { scrollYProgress } = useScroll();
 
-    const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState(true);
 
     useMotionValueEvent(scrollYProgress, "change", (current) => {
         // Check if current is not undefined and is a number

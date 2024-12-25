@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { calculateAverageRating, processCheckboxData, processMultipleChoiceData, processScaleData, processTimeData } from "@/lib/utils/analytics";
 import { BarChart } from "./charts/bar-chart";
 import { PieChart } from "./charts/pie-chart";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 interface QuestionAnalyticsProps {
     questions: any[];
@@ -62,26 +63,26 @@ export function QuestionAnalytics({ questions, responses }: QuestionAnalyticsPro
             //         />
             //     );
 
-            //   case "short-answer":
-            //   case "paragraph":
-            //     return (
-            //       <div>
-            //         <h3 className="text-lg font-semibold mb-2">{question.questionText}</h3>
-            //                 <ScrollArea className="h-[300px]">
-            //         <div className="space-y-2">
-            //                     {responses.map((response, index) => {
-            //             const answer = response.responses.find((r: any) => r.questionId === question._id)?.answer;
-            //             if (!answer) return null;
-            //             return (
-            //               <div key={index} className="p-3 rounded-lg bg-secondary/50">
-            //                 <p className="text-sm">{answer}</p>
-            //               </div>
-            //             );
-            //           })}
-            //         </div>
-            //           </ScrollArea>
-            //       </div>
-            //     );
+              case "short-answer":
+              case "paragraph":
+                return (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">{question.questionText}</h3>
+                            <ScrollArea className="h-[300px]">
+                    <div className="space-y-2">
+                                {responses.map((response, index) => {
+                        const answer = response.responses.find((r: any) => r.questionId === question._id)?.answer;
+                        if (!answer) return null;
+                        return (
+                          <div key={index} className="p-3 rounded-lg bg-secondary/50">
+                            <p className="text-sm">{answer}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                      </ScrollArea>
+                  </div>
+                );
 
             default:
                 return null;
