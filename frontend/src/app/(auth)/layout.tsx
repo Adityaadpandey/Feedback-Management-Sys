@@ -1,10 +1,5 @@
-import { Metadata } from 'next';
 import React from 'react';
 
-export const metadata: Metadata = {
-    title: "CognifyForms - AI-Powered Forms",
-    description: "Signup and SignIn pages"
-};
 
 
 type Props = {
