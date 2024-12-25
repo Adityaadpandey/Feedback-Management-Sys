@@ -1,4 +1,5 @@
-import { Request, Router } from "express";
+import { Request, Router, Response } from "express";
+import * as XLSX from 'xlsx';
 import { authenticate } from "../middleware/authenticator";
 import Form from "../models/Form";
 import ResponseModel from "../models/Responses";
@@ -79,33 +80,86 @@ router.get("/titles", authenticate, async (req: RequestWithUser, res): Promise<a
 });
 
 
-// Get the CSV file for the form
-router.get("/forms/:formId/export/csv", authenticate, async (req: RequestWithUser, res): Promise<any> => {
-    try {
-        const { formId } = req.params;
-        const form = await Form.findById(formId);
-        if (!form) {
-            return res.status(404).json({ message: "Form not found" });
-        }
-        const responses = await ResponseModel.find({ formId }).lean().exec();
-        if (!responses.length) {
-            return res.status(404).json({ message: "No responses found" });
-        }
-        // Prepare CSV data
 
-        const fields = Object.keys(responses[0]);
-        const csv = responses.map((response) => fields.map((field) => response[field]).join(","));
-        // Set the response headers
-        res.setHeader("Content-Type", "text/csv");
-        res.setHeader("Content-Disposition", `attachment; filename=responses-${form.title}.csv`);
-        // Send the CSV data
-        res.status(200).send(csv.join("\n"));
-    } catch (error) {
-        console.error("Error exporting responses:", error.message);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+// Function to convert form data and responses to XLSX
+
+// Helper function to convert form and responses to XLSX
+async function convertToXlsx(form: any, responses: any[]): Promise<Buffer> {
+    const workbook = XLSX.utils.book_new();
+
+    // Validate form structure
+    if (!form.questions || !Array.isArray(form.questions)) {
+        throw new Error("Invalid form structure: 'questions' not found or not an array.");
     }
+
+    // Prepare headers (question texts)
+    const headers = form.questions.map((q: any) => q.questionText);
+
+    // Prepare rows (responses)
+    const data = responses.map((response: any) => {
+        return form.questions.map((question: any) => {
+            // Debug: Log question ID and responses
+            console.log("Question ID:", question._id, "Response Data:", response.responses);
+
+            // Find the corresponding answer
+            const answer = response.responses.find((r: any) => String(r.questionId) === String(question._id));
+            if (answer) {
+                // Handle multiple-choice answers
+                return Array.isArray(answer.answer) ? answer.answer.join(", ") : answer.answer;
+            }
+            return 'N/A'; // Default for unanswered questions
+        });
+    });
+
+    // Debug: Log headers and data
+    console.log("Headers:", headers);
+    console.log("Data Rows:", data);
+
+    // Add headers and data to the worksheet
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Responses');
+
+    // Generate XLSX buffer
+    return XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' });
 }
-);
+
+
+// API Endpoint to export form responses to XLSX
+router.get("/forms/:formId/export/csv", authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
+    try {
+        const userId = req.user?._id;
+        const formId = req.params.formId;
+
+        if (!userId) {
+            return res.status(401).json({ message: "Authentication required." });
+        }
+        if (!formId) return res.status(400).json({ message: "Form ID is required." });
+
+        // Fetch the form created by the user
+        const form = await Form.findOne({ _id: formId, createdBy: userId });
+        if (!form) return res.status(404).json({ message: "Form not found." });
+
+        // Fetch all responses for the form
+        const responses = await ResponseModel.find({ formId });
+        if (!responses.length) return res.status(404).json({ message: "No responses found for this form." });
+
+        // Convert form and responses to XLSX
+        const xlsxBuffer = await convertToXlsx(form, responses);
+
+        // Set headers for XLSX download
+        const filename = `${form.title || 'form'}_responses.xlsx`;
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+        // Send XLSX file
+        res.send(xlsxBuffer);
+    } catch (error: any) {
+        console.error("Error exporting responses:", error.message);
+        res.status(500).json({ message: "Internal server error.", error: error.message });
+    }
+});
 
 
 // GET all looged users from the form
@@ -114,7 +168,7 @@ router.get(
     authenticate,
     async (req: RequestWithUser, res): Promise<any> => {
       try {
-        const { formId } = req.params;
+        const { formId } = req.params;``
 
         // Check if the form exists
         const form = await Form.findById(formId);
