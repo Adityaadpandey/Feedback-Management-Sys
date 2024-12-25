@@ -69,7 +69,7 @@ export function Footer() {
                                     transition={{ delay: 0.5, duration: 0.4 }}
                                     className="flex items-center text-sm text-gray-200"
                                 >
-                                    <PawPrint className="h-5 w-5 mr-2 text-yellow-400" />
+                                    <span className="text-xl pl-5  pr-3"> 🦖</span>
                                     Product by T-Rex
                                 </motion.span>
                             </div>
