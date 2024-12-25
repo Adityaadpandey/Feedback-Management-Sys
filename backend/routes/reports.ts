@@ -1,4 +1,4 @@
-import { Request, Router, Response } from "express";
+import { Request, Response, Router } from "express";
 import * as XLSX from 'xlsx';
 import { authenticate } from "../middleware/authenticator";
 import Form from "../models/Form";
@@ -162,7 +162,7 @@ async function convertToXlsx(form: any, responses: any[]): Promise<Buffer> {
 
 // API endpoint to export form responses to XLSX
 router.get(
-    "/forms/:formId/export/csv",
+    "/forms/:formId/export/xlsx",
     authenticate,
     async (req: any, res: Response): Promise<any> => {
         try {
