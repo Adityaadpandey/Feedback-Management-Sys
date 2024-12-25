@@ -39,7 +39,7 @@ export function Footer() {
                     <div className="lg:col-span-2">
                         <div className="flex items-center space-x-2">
                             <Boxes className="h-6 w-6 text-primary" />
-                            <span className="text-xl font-bold">FormFlow</span>
+                            <span className="text-xl font-bold">CognifyForms</span>
                         </div>
                         <p className="mt-4 max-w-xs text-sm text-muted-foreground">
                             Transform your feedback collection and analysis with AI-powered

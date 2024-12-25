@@ -3,7 +3,7 @@ import React from 'react';
 
 
 export const metadata: Metadata = {
-    title: "FormFlow - AI-Powered Forms",
+    title: "CognifyForms - AI-Powered Forms",
     description: "Leverage AI to create, analyze, and personalize your forms. Get intelligent suggestions, optimize responses, and enhance your form-filling experience with cutting-edge AI technology."
 };
 

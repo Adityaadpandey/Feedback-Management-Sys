@@ -11,7 +11,7 @@ import "./globals.css";
 const font = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "FormFlow - Dynamic Form Builder",
+    title: "CognifyForms - Dynamic Form Builder",
     description: "Create and manage customizable forms with AI-powered analysis, seamless integrations, and flexible collaboration tools for teams of all sizes."
 };
 

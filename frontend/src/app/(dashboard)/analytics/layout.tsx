@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 const queryClient = new QueryClient();
 
 export const metadata: Metadata = {
-    title: "FormFlow - Insights & Analytics",
+    title: "CognifyForms - Insights & Analytics",
     description: "Gain actionable insights from your form responses with detailed analytics, AI-driven trends, and customizable reports. Track performance, user engagement, and make data-driven decisions."
 
 };
