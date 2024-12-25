@@ -11,8 +11,14 @@ import "./globals.css";
 const font = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "CognifyForms - Dynamic Form Builder",
-    description: "Create and manage customizable forms with AI-powered analysis, seamless integrations, and flexible collaboration tools for teams of all sizes."
+  title: "CognifyForms - Dynamic Form Builder",
+  description:
+    "Create and manage customizable forms with AI-powered analysis, seamless integrations, and flexible collaboration tools for teams of all sizes.",
+  icons: {
+    icon: "/vercel.svg",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png", // Optional for Apple touch devices
+  },
 };
 
 export default function RootLayout({
