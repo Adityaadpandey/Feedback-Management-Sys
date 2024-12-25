@@ -1,4 +1,11 @@
 import React from 'react';
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "FormFlow - Fill the Form",
+  description: "Easily fill out forms and provide valuable feedback. Customize your responses and enjoy a seamless form experience with real-time progress tracking and AI-powered suggestions."
+};
+
 
 export default function layout({
     children,

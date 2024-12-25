@@ -1,4 +1,13 @@
 import { GradientText } from "@/components/ui/gradient-text";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+   title: "FormFlow - Insights & Analytics",
+description: "Gain actionable insights from your form responses with detailed analytics, AI-driven trends, and customizable reports. Track performance, user engagement, and make data-driven decisions."
+
+};
+
+
 
 export default function DashboardLayout({
     forms,
