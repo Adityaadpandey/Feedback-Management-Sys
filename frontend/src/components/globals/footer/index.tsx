@@ -1,6 +1,8 @@
 "use client"
 
-import { Boxes } from "lucide-react"
+
+import { motion } from "framer-motion"
+import { Boxes, PawPrint } from "lucide-react"
 import { FooterSection } from "./footer-section"
 import { SocialLinks } from "./social-links"
 
@@ -37,10 +39,42 @@ export function Footer() {
             <div className="container py-12">
                 <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
                     <div className="lg:col-span-2">
-                        <div className="flex items-center space-x-2">
-                            <Boxes className="h-6 w-6 text-primary" />
-                            <span className="text-xl font-bold">CognifyForms</span>
-                        </div>
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            className="flex items-center space-x-4  p-4 rounded-lg shadow-lg"
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.2, duration: 0.4 }}
+                                className="bg-white p-2 rounded-full"
+                            >
+                                <Boxes className="h-8 w-8 text-primary" />
+                            </motion.div>
+
+                            <div className="flex flex-col">
+                                <motion.h1
+                                    initial={{ x: -50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 0.3, duration: 0.5 }}
+                                    className="text-3xl font-extrabold text-white"
+                                >
+                                    CognifyForms
+                                </motion.h1>
+                                <motion.span
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.5, duration: 0.4 }}
+                                    className="flex items-center text-sm text-gray-200"
+                                >
+                                    <PawPrint className="h-5 w-5 mr-2 text-yellow-400" />
+                                    Product by T-Rex
+                                </motion.span>
+                            </div>
+                        </motion.div>
+
                         <p className="mt-4 max-w-xs text-sm text-muted-foreground">
                             Transform your feedback collection and analysis with AI-powered
                             insights and automated workflows.
