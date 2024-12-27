@@ -44,7 +44,7 @@ export function Footer() {
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}
-                            className="flex items-center space-x-4  p-4 rounded-lg shadow-lg"
+                            className="flex items-center space-x-4  p-4 rounded-lg "
                         >
                             <motion.div
                                 initial={{ scale: 0 }}
@@ -60,7 +60,7 @@ export function Footer() {
                                     initial={{ x: -50, opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.3, duration: 0.5 }}
-                                    className="text-3xl font-extrabold text-white"
+                                    className="text-3xl font-extrabold "
                                 >
                                     CognifyForms
                                 </motion.h1>
@@ -68,7 +68,7 @@ export function Footer() {
                                     initial={{ y: 20, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{ delay: 0.5, duration: 0.4 }}
-                                    className="flex items-center text-sm text-gray-200"
+                                    className="flex items-center text-sm text-primary"
                                 >
 
                                     Product by T-Rex
