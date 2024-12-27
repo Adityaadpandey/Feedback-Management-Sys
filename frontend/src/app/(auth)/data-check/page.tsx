@@ -85,7 +85,7 @@ const UserInfoForm: React.FC = () => {
         try {
             const response = await API.register(formData);
 
-            if (response.status === 200) {
+            if (response.status === 201) {
                 localStorage.setItem("user", JSON.stringify(response.data.accessToken));
                 setRole(JSON.stringify(response.data.role));
                 setSubscriptionPlan(JSON.stringify(response.data.subscriptionPlan));

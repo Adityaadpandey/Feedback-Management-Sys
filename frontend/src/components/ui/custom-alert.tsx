@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 interface CustomAlertProps {
     title: string;
     message: string;
-    type: "success" | "error" | "info" | "warning"; // Define alert types
+    type: "success" | "error" | "info" | "warning"; // alert types
     onClose: () => void;
 }
 
-// Map alert types to styles using your Tailwind color scheme
+// alert types to styles color scheme
 const alertStyles = {
     success: "bg-background text-primary-foreground",
     error: "bg-destructive text-destructive-foreground",
