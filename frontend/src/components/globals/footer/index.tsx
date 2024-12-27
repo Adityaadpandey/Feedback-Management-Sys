@@ -2,7 +2,6 @@
 
 
 import { motion } from "framer-motion"
-import { Boxes } from "lucide-react"
 import Image from "next/image"
 import { FooterSection } from "./footer-section"
 import { SocialLinks } from "./social-links"
@@ -50,9 +49,9 @@ export function Footer() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ delay: 0.2, duration: 0.4 }}
-                                // className="bg-white p-2 rounded-full"
+                            // className="bg-white p-2 rounded-full"
                             >
-                               <span className="text-2xl pl-5 pr-3"><Image src="/t-rex_1f996.gif" width={50} height={50} alt="" /></span>
+                                <span className="text-2xl pl-5 pr-3"><Image unoptimized src="/t-rex_1f996.gif" width={50} height={50} alt="" /></span>
                             </motion.div>
 
                             <div className="flex flex-col">

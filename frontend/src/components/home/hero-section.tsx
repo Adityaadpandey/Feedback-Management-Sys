@@ -4,15 +4,25 @@ import { GradientText } from "@/components/ui/gradient-text";
 import { MovingBorder } from "@/components/ui/moving-border";
 import { Spotlight } from "@/components/ui/spotlight";
 import { useAlert } from "@/hooks/alert-provider";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { useRef } from "react";
 import { HeroBadge } from "./hero-badge";
 import { HeroStats } from "./hero-stats";
 import { InteractiveShowcase } from "./InteractiveShowcase";
+import { VideoShowcase } from "./video-showcase";
 
 export function HeroSection() {
     const router = useRouter()
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end start"],
+    });
+
+    const scale = useTransform(scrollYProgress, [0, 1], [0.8, 1]);
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 1]);
 
     const { showAlert } = useAlert();
 
@@ -59,6 +69,12 @@ export function HeroSection() {
                             View Demo
                         </Button>
                     </div>
+                    <motion.div
+                        style={{ scale, opacity }}
+                        className="w-full max-w-6xl mx-auto mt-16 mb-8"
+                    >
+                        <VideoShowcase />
+                    </motion.div>
 
                     <div className="m-10">
                         <motion.div
