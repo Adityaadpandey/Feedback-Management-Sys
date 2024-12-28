@@ -84,6 +84,8 @@ export function HeroSection() {
                             className="relative lg:mt-8"
                         >
                             <InteractiveShowcase />
+                            {/* <div className="absolute  -bottom-24 left-0 w-full h-1 bg-primary" /> */}
+
                         </motion.div>
                         <HeroStats />
                     </div>
