@@ -16,7 +16,10 @@ export const MovingBorder = ({
   containerClassName?: string;
   as?: any;
 }) => {
-  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [position, setPosition] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -37,7 +40,7 @@ export const MovingBorder = ({
       <div
         className={cn(
           "absolute inset-0 bg-gradient-to-r from-primary via-orange-300 to-primary-foreground blur-xl transition-all duration-500",
-          className
+          className,
         )}
         style={{
           transform: `translate(${position.x}px, ${position.y}px)`,

@@ -25,26 +25,35 @@ export function useFormState() {
       _id: `question-${Date.now()}`,
       questionType: type,
       questionText: "",
-      options: ["multiple-choice", "checkbox", "dropdown"].includes(type) ? [] : undefined,
-      validations: { required: false }
+      options: ["multiple-choice", "checkbox", "dropdown"].includes(type)
+        ? []
+        : undefined,
+      validations: { required: false },
     };
     setQuestions([...questions, newQuestion]);
   };
 
   const updateQuestion = (id: string, updates: Partial<FormQuestion>) => {
-    setQuestions(questions.map(q => q._id === id ? { ...q, ...updates } : q));
+    setQuestions(
+      questions.map((q) => (q._id === id ? { ...q, ...updates } : q)),
+    );
   };
 
   const deleteQuestion = (id: string) => {
-    setQuestions(questions.filter(q => q._id !== id));
+    setQuestions(questions.filter((q) => q._id !== id));
   };
 
-  const setFormContent = (formTitle: string, generatedQuestions: FormQuestion[]) => {
+  const setFormContent = (
+    formTitle: string,
+    generatedQuestions: FormQuestion[],
+  ) => {
     setTitle(formTitle);
-    setQuestions(generatedQuestions.map(q => ({
-      ...q,
-      _id: `question-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    })));
+    setQuestions(
+      generatedQuestions.map((q) => ({
+        ...q,
+        _id: `question-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      })),
+    );
   };
 
   return {
@@ -55,6 +64,6 @@ export function useFormState() {
     addQuestion,
     updateQuestion,
     deleteQuestion,
-    setFormContent
+    setFormContent,
   };
 }

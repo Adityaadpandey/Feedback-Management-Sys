@@ -18,11 +18,19 @@ interface QuestionEditorProps {
   onDelete: () => void;
 }
 
-export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }: QuestionEditorProps) {
+export function QuestionEditor({
+  question,
+  dragHandleProps,
+  onUpdate,
+  onDelete,
+}: QuestionEditorProps) {
   const [showPreview, setShowPreview] = useState(false);
 
   const handleAddOption = () => {
-    const options = [...(question.options || []), question.questionType === "matrix" ? "" : ""];
+    const options = [
+      ...(question.options || []),
+      question.questionType === "matrix" ? "" : "",
+    ];
     onUpdate({ options });
   };
 
@@ -87,8 +95,42 @@ export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }
               onChange={() => {}} // Preview only
             />
           </div>
+        ) : question.questionType === "matrix" ? (
+          <div className="mt-4 space-y-2">
+            {question.options?.map((option, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-2"
+              >
+                <Input
+                  value={option}
+                  onChange={(e) => handleUpdateOption(index, e.target.value)}
+                  placeholder={`Row ${index + 1}`}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleDeleteOption(index)}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </motion.div>
+            ))}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddOption}
+              className="mt-2"
+            >
+              Add Row
+            </Button>
+          </div>
         ) : (
-          question.questionType === "matrix" ? (
+          ["multiple-choice", "checkbox", "dropdown"].includes(
+            question.questionType,
+          ) && (
             <div className="mt-4 space-y-2">
               {question.options?.map((option, index) => (
                 <motion.div
@@ -100,7 +142,7 @@ export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }
                   <Input
                     value={option}
                     onChange={(e) => handleUpdateOption(index, e.target.value)}
-                    placeholder={`Row ${index + 1}`}
+                    placeholder={`Option ${index + 1}`}
                   />
                   <Button
                     variant="ghost"
@@ -117,43 +159,9 @@ export function QuestionEditor({ question, dragHandleProps, onUpdate, onDelete }
                 onClick={handleAddOption}
                 className="mt-2"
               >
-                Add Row
+                Add Option
               </Button>
             </div>
-          ) : (
-            ["multiple-choice", "checkbox", "dropdown"].includes(question.questionType) && (
-              <div className="mt-4 space-y-2">
-                {question.options?.map((option, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-center gap-2"
-                  >
-                    <Input
-                      value={option}
-                      onChange={(e) => handleUpdateOption(index, e.target.value)}
-                      placeholder={`Option ${index + 1}`}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteOption(index)}
-                    >
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </motion.div>
-                ))}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddOption}
-                  className="mt-2"
-                >
-                  Add Option
-                </Button>
-              </div>
-            )
           )
         )}
       </div>

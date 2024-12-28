@@ -26,7 +26,7 @@ export function Checkbox({ question, onChange, value = [] }: QuestionProps) {
                 } else {
                   onChange(
                     question._id,
-                    currentValues.filter((val: string) => val !== option)
+                    currentValues.filter((val: string) => val !== option),
                   );
                 }
               }}

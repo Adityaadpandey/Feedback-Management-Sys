@@ -16,11 +16,10 @@ export interface FormQuestion {
   options?: string[];
 }
 
-
 export interface FormTitle {
-    _id: string;
-    title: string;
-  }
+  _id: string;
+  title: string;
+}
 
 export interface FormData {
   _id: string;
@@ -41,17 +40,16 @@ export interface FormProps {
   buttonText?: string;
 }
 
-export interface FormResponse{
+export interface FormResponse {
+  _id: string;
+  submittedAt: string;
+  submittedBy: {
+    user_name: string;
+    user_id: string;
+  };
+  responses: {
     _id: string;
-    submittedAt: string;
-    submittedBy: {
-        user_name: string;
-        user_id: string;
-    };
-    responses: {
-        _id: string;
-        questionId: string;
-        answer: any;
-    }[];
-
+    questionId: string;
+    answer: any;
+  }[];
 }

@@ -30,7 +30,7 @@ export function FormPageClient({ slug }: FormPageClientProps) {
         setError(
           err.status === 404
             ? "Form not found"
-            : "Failed to load form. Please try again later."
+            : "Failed to load form. Please try again later.",
         );
       } finally {
         setLoading(false);
@@ -42,7 +42,7 @@ export function FormPageClient({ slug }: FormPageClientProps) {
 
   if (loading) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="flex items-center justify-center min-h-[400px]"

@@ -15,7 +15,7 @@ export function ResponsesTimeline({ responses }: { responses: any[] }) {
   // Process responses data for the timeline
   const timelineData = responses.reduce((acc: any[], response) => {
     const date = new Date(response.submittedAt).toLocaleDateString();
-    const existingDate = acc.find(item => item.date === date);
+    const existingDate = acc.find((item) => item.date === date);
 
     if (existingDate) {
       existingDate.count += 1;

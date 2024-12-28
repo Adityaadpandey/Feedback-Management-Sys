@@ -10,10 +10,14 @@ if (!API_KEY) {
 
 const genAI = new GoogleGenerativeAI(API_KEY || "");
 
-export async function generateForm(description: string): Promise<GeneratedForm> {
+export async function generateForm(
+  description: string,
+): Promise<GeneratedForm> {
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const result = await model.generateContent(FORM_GENERATION_PROMPT + description);
+    const result = await model.generateContent(
+      FORM_GENERATION_PROMPT + description,
+    );
     const response = await result.response;
     const text = response.text();
 

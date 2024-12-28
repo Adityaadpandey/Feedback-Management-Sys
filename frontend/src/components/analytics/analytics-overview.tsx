@@ -24,7 +24,7 @@ export function AnalyticsOverview({ analytics }: { analytics: any }) {
       description: "Form completion rate",
     },
   ];
-    // console.log(analytics);
+  // console.log(analytics);
 
   return (
     <div className="grid gap-4 md:grid-cols-3">

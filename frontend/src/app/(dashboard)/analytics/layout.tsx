@@ -5,12 +5,8 @@ import { ReactNode } from "react";
 
 const queryClient = new QueryClient();
 
-
-
 export default function RootLayout({ children }: { children: ReactNode }) {
-    return (
-        <QueryClientProvider client={queryClient}>
-            {children}
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
 }

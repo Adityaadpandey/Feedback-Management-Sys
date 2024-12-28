@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Zap } from "lucide-react"
+import { motion } from "framer-motion";
+import { Zap } from "lucide-react";
 
 export function TokenBadge({ tokens }: { tokens: number }) {
   return (
@@ -13,5 +13,5 @@ export function TokenBadge({ tokens }: { tokens: number }) {
       <Zap className="mr-1 h-3.5 w-3.5" />
       {tokens.toLocaleString()} tokens
     </motion.div>
-  )
+  );
 }

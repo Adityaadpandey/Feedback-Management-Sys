@@ -3,7 +3,7 @@ import { ThemeProvider } from "@/components/globals/theme-provider";
 import { ModeToggle } from "@/components/globals/theme-toogle";
 import { AlertProvider } from "@/hooks/alert-provider";
 import { RoleProvider } from "@/hooks/role-provider";
-import { ClerkProvider } from '@clerk/nextjs';
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
@@ -22,30 +22,34 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
-
+  children: React.ReactNode;
 }>) {
-    return (
-        <ClerkProvider>
-            <RoleProvider initialRole="user" initialSubscriptionPlan="free" initialAiGenerationLimit={0}>
-                <html lang="en" suppressHydrationWarning>
-                    <body className={font.className}>
-                        <AlertProvider>
-                            <ThemeProvider
-                                attribute="class"
-                                defaultTheme="system"
-                                enableSystem
-                                disableTransitionOnChange>
-                                <ModeToggle />
-                                <Navbar />
-                                {children}
-                            </ThemeProvider>
-                        </AlertProvider>
-                    </body>
-                </html>
-            </RoleProvider>
-        </ClerkProvider>
-    );
+  return (
+    <ClerkProvider>
+      <RoleProvider
+        initialRole="user"
+        initialSubscriptionPlan="free"
+        initialAiGenerationLimit={0}
+      >
+        <html lang="en" suppressHydrationWarning>
+          <body className={font.className}>
+            <AlertProvider>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <ModeToggle />
+                <Navbar />
+                {children}
+              </ThemeProvider>
+            </AlertProvider>
+          </body>
+        </html>
+      </RoleProvider>
+    </ClerkProvider>
+  );
 }

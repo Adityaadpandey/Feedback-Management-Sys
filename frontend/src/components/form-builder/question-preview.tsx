@@ -21,16 +21,16 @@ interface QuestionPreviewProps {
 export function QuestionPreview({ question, onChange }: QuestionPreviewProps) {
   const components = {
     "short-answer": ShortAnswer,
-    "paragraph": Paragraph,
+    paragraph: Paragraph,
     "multiple-choice": MultipleChoice,
-    "checkbox": Checkbox,
-    "dropdown": Dropdown,
+    checkbox: Checkbox,
+    dropdown: Dropdown,
     "file-upload": FileUpload,
-    "date": DatePicker,
-    "time": TimePicker,
-    "rating": Rating,
+    date: DatePicker,
+    time: TimePicker,
+    rating: Rating,
     "linear-scale": LinearScale,
-    "matrix": Matrix,
+    matrix: Matrix,
   };
 
   const Component = components[question.questionType];
