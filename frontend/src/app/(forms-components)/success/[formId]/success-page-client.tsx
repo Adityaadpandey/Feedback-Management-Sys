@@ -31,7 +31,7 @@ export function SuccessPageClient({ formId }: SuccessPageClientProps) {
         setError(
           err.status === 404
             ? "Form not found"
-            : "Failed to load form. Please try again later."
+            : "Failed to load form. Please try again later.",
         );
       } finally {
         setLoading(false);
@@ -71,7 +71,7 @@ export function SuccessPageClient({ formId }: SuccessPageClientProps) {
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-8">
-      <SuccessHeader />
+        <SuccessHeader />
         <div className="max-w-3xl mx-auto space-y-6">
           <ShareSection formId={formId} />
           <FormPreview formData={formData} />

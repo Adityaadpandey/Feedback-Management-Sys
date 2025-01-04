@@ -42,10 +42,7 @@ export function Spotlight({
   }, []);
 
   return (
-    <div
-      ref={divRef}
-      className={cn("relative overflow-hidden", className)}
-    >
+    <div ref={divRef} className={cn("relative overflow-hidden", className)}>
       <div
         className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300"
         style={{

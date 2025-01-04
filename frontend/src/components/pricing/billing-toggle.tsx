@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
+import { motion } from "framer-motion";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 interface BillingToggleProps {
-  yearly: boolean
-  onToggle: () => void
+  yearly: boolean;
+  onToggle: () => void;
 }
 
 export function BillingToggle({ yearly, onToggle }: BillingToggleProps) {
@@ -42,5 +42,5 @@ export function BillingToggle({ yearly, onToggle }: BillingToggleProps) {
         )}
       </div>
     </div>
-  )
+  );
 }

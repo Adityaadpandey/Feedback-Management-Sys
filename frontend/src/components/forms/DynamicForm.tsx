@@ -17,7 +17,11 @@ import { LinearScale } from "./question-types/LinearScale";
 import { Matrix } from "./question-types/Matrix";
 import { motion } from "framer-motion";
 
-export function DynamicForm({ questions, onSubmit, buttonText = "Submit" }: FormProps) {
+export function DynamicForm({
+  questions,
+  onSubmit,
+  buttonText = "Submit",
+}: FormProps) {
   const [responses, setResponses] = useState<Record<string, any>>({});
 
   const handleInputChange = (id: string, value: any) => {
@@ -71,7 +75,7 @@ export function DynamicForm({ questions, onSubmit, buttonText = "Submit" }: Form
           {renderQuestionType(question)}
         </QuestionWrapper>
       ))}
-      
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

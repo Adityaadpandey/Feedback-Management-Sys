@@ -19,7 +19,7 @@ import {
   Clock,
   Star,
   LineChart,
-  Grid
+  Grid,
 } from "lucide-react";
 
 interface QuestionTypeSelectorProps {
@@ -38,10 +38,13 @@ const questionTypes = [
   { value: "time", label: "Time", icon: Clock },
   { value: "rating", label: "Rating", icon: Star },
   { value: "linear-scale", label: "Linear Scale", icon: LineChart },
-  { value: "matrix", label: "Matrix", icon: Grid }
+  { value: "matrix", label: "Matrix", icon: Grid },
 ] as const;
 
-export function QuestionTypeSelector({ currentType, onTypeChange }: QuestionTypeSelectorProps) {
+export function QuestionTypeSelector({
+  currentType,
+  onTypeChange,
+}: QuestionTypeSelectorProps) {
   return (
     <Select value={currentType} onValueChange={onTypeChange}>
       <SelectTrigger className="w-[200px]">

@@ -14,7 +14,7 @@ import {
   Clock,
   Star,
   LineChart,
-  Grid
+  Grid,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { FormQuestion } from "@/types/form";
@@ -34,7 +34,7 @@ const questionTypes = [
   { type: "time" as const, icon: Clock, label: "Time" },
   { type: "rating" as const, icon: Star, label: "Rating" },
   { type: "linear-scale" as const, icon: LineChart, label: "Linear Scale" },
-  { type: "matrix" as const, icon: Grid, label: "Matrix" }
+  { type: "matrix" as const, icon: Grid, label: "Matrix" },
 ];
 
 export function Toolbox({ onAddQuestion }: ToolboxProps) {

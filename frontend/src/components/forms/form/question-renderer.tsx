@@ -16,16 +16,16 @@ import { Matrix } from "./question-types/matrix";
 export function renderQuestionType(props: QuestionProps) {
   const questionTypes = {
     "short-answer": ShortAnswer,
-    "paragraph": Paragraph,
+    paragraph: Paragraph,
     "multiple-choice": MultipleChoice,
-    "date": DatePicker,
-    "checkbox": Checkbox,
-    "dropdown": Dropdown,
+    date: DatePicker,
+    checkbox: Checkbox,
+    dropdown: Dropdown,
     "file-upload": FileUpload,
-    "time": TimePicker,
-    "rating": Rating,
+    time: TimePicker,
+    rating: Rating,
     "linear-scale": LinearScale,
-    "matrix": Matrix,
+    matrix: Matrix,
   };
 
   const Component = questionTypes[props.question.questionType];

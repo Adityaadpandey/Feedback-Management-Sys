@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { PlanFeatures } from "./plan-features"
-import { TokenBadge } from "./token-badge"
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { PlanFeatures } from "./plan-features";
+import { TokenBadge } from "./token-badge";
 
 interface PlanCardProps {
-  name: string
+  name: string;
   price: {
-    monthly: number
-    yearly: number
-  }
-  description: string
-  features: Array<{ text: string; included: boolean }>
-  tokens: number
-  popular?: boolean
-  index: number
+    monthly: number;
+    yearly: number;
+  };
+  description: string;
+  features: Array<{ text: string; included: boolean }>;
+  tokens: number;
+  popular?: boolean;
+  index: number;
 }
 
 export function PlanCard({
@@ -35,7 +35,8 @@ export function PlanCard({
       transition={{ delay: index * 0.1 }}
       className={cn(
         "group relative overflow-hidden rounded-2xl border bg-card p-6 transition-all hover:border-primary/50 dark:hover:border-primary/30",
-        popular && "border-primary shadow-lg shadow-primary/10 dark:shadow-primary/5"
+        popular &&
+          "border-primary shadow-lg shadow-primary/10 dark:shadow-primary/5",
       )}
     >
       {/* Gradient background effect */}
@@ -65,18 +66,18 @@ export function PlanCard({
         <Button
           className={cn(
             "mb-8 w-full transition-transform hover:scale-105",
-            popular ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80"
-                  )}
-                  onClick={() => console.log(name)}
-                  //   TODO: add the functionality to redirect to the payment page
-                  
-              >
-
+            popular
+              ? "bg-primary hover:bg-primary/90"
+              : "bg-secondary hover:bg-secondary/80",
+          )}
+          onClick={() => console.log(name)}
+          //   TODO: add the functionality to redirect to the payment page
+        >
           Get Started
         </Button>
 
         <PlanFeatures features={features} />
       </div>
     </motion.div>
-  )
+  );
 }

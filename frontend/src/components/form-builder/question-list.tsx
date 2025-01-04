@@ -15,7 +15,11 @@ interface QuestionListProps {
   onDelete: (id: string) => void;
 }
 
-export function QuestionList({ questions, onUpdate, onDelete }: QuestionListProps) {
+export function QuestionList({
+  questions,
+  onUpdate,
+  onDelete,
+}: QuestionListProps) {
   return (
     <AnimatePresence>
       {questions.map((question, index) => (

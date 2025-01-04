@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Sparkles } from "lucide-react"
+import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
 
 export function PricingHeader() {
   return (
@@ -14,7 +14,7 @@ export function PricingHeader() {
         <Sparkles className="mr-2 h-3.5 w-3.5 text-primary" />
         Special launch pricing
       </motion.div>
-      
+
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -23,16 +23,16 @@ export function PricingHeader() {
       >
         Simple, transparent pricing
       </motion.h1>
-      
+
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
         className="mt-4 text-lg text-muted-foreground"
       >
-        Choose the perfect plan for your feedback management needs.
-        All plans include core features to get you started.
+        Choose the perfect plan for your feedback management needs. All plans
+        include core features to get you started.
       </motion.p>
     </div>
-  )
+  );
 }

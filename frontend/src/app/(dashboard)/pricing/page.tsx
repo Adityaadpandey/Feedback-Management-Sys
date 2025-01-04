@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { PlanCard } from "@/components/pricing/plan-card"
-import { BillingToggle } from "@/components/pricing/billing-toggle"
-import { PricingHeader } from "@/components/pricing/pricing-header"
+import { useState } from "react";
+import { PlanCard } from "@/components/pricing/plan-card";
+import { BillingToggle } from "@/components/pricing/billing-toggle";
+import { PricingHeader } from "@/components/pricing/pricing-header";
 
 const plans = [
   {
@@ -70,14 +70,16 @@ const plans = [
       { text: "Custom integrations with APIs", included: true },
       { text: "Full community management tools", included: true },
       { text: "Enterprise collaboration and data exports", included: true },
-      { text: "Real-time emotion tracking for team interactions", included: true },
+      {
+        text: "Real-time emotion tracking for team interactions",
+        included: true,
+      },
     ],
   },
 ];
 
-
 export default function PricingPage() {
-  const [yearly, setYearly] = useState(false)
+  const [yearly, setYearly] = useState(false);
 
   return (
     <div className="relative min-h-screen pt-20">
@@ -98,15 +100,19 @@ export default function PricingPage() {
             <PlanCard
               key={plan.name}
               {...plan}
-              price={yearly ? {
-                monthly: Math.round(plan.price.yearly / 12),
-                yearly: plan.price.yearly,
-              } : plan.price}
+              price={
+                yearly
+                  ? {
+                      monthly: Math.round(plan.price.yearly / 12),
+                      yearly: plan.price.yearly,
+                    }
+                  : plan.price
+              }
               index={index}
             />
           ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

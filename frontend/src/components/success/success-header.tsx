@@ -14,7 +14,6 @@ export function SuccessHeader() {
     >
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-primary" />
             <span className="font-semibold">Form Created Succesfully</span>

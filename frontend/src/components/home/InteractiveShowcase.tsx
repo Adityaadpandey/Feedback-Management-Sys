@@ -9,22 +9,26 @@ export function InteractiveShowcase() {
     {
       icon: MessageSquare,
       title: "Smart Feedback Collection",
-      description: "Collect feedback across multiple channels with intelligent routing and categorization.",
+      description:
+        "Collect feedback across multiple channels with intelligent routing and categorization.",
     },
     {
       icon: BarChart3,
       title: "Advanced Analytics",
-      description: "Transform raw feedback into actionable insights with powerful analytics tools.",
+      description:
+        "Transform raw feedback into actionable insights with powerful analytics tools.",
     },
     {
       icon: Users2,
       title: "Team Collaboration",
-      description: "Work together seamlessly with built-in collaboration features and workflows.",
+      description:
+        "Work together seamlessly with built-in collaboration features and workflows.",
     },
     {
       icon: Zap,
       title: "Automated Actions",
-      description: "Set up automated responses and actions based on feedback patterns.",
+      description:
+        "Set up automated responses and actions based on feedback patterns.",
     },
   ];
 

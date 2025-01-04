@@ -10,7 +10,12 @@ interface FeatureCardProps {
   delay?: number;
 }
 
-export function FeatureCard({ icon: Icon, title, description, delay = 0 }: FeatureCardProps) {
+export function FeatureCard({
+  icon: Icon,
+  title,
+  description,
+  delay = 0,
+}: FeatureCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}

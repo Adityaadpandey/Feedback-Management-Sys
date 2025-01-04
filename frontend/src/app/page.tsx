@@ -1,16 +1,16 @@
-import React from 'react'
-import { Footer } from '@/components/globals/footer';
-import { HeroSection } from '@/components/home/hero-section';
+import React from "react";
+import { Footer } from "@/components/globals/footer";
+import { HeroSection } from "@/components/home/hero-section";
 
 const page = () => {
-    return (
-      <>
-     <div className="">
-          <HeroSection />
+  return (
+    <>
+      <div className="">
+        <HeroSection />
       </div>
-      <Footer/>
-      </>
-  )
-}
+      <Footer />
+    </>
+  );
+};
 
-export default page
+export default page;

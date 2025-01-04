@@ -49,7 +49,10 @@ export function Matrix({ question, onChange, value = {} }: QuestionProps) {
                     }
                   >
                     <div className="flex justify-center">
-                      <RadioGroupItem value={rating} id={`${option}-${rating}`} />
+                      <RadioGroupItem
+                        value={rating}
+                        id={`${option}-${rating}`}
+                      />
                     </div>
                   </RadioGroup>
                 </TableCell>
