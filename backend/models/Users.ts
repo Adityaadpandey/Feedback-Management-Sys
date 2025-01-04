@@ -62,7 +62,7 @@ const UserSchema: Schema = new Schema(
         },
         ai_generation: {
             type: Number,
-            default: 0,
+            default: 10,
         },
         ai_generation_limit: {
             type: Number,
@@ -74,27 +74,26 @@ const UserSchema: Schema = new Schema(
     }
 );
 
-// // Middleware to set ai_generation_limit based on the role before saving the user
-// UserSchema.pre('save', function (next) {
-//     if (this.isNew || this.isModified('subscription_plan')) {
-//         // Set AI generation limit based on the user's role
-//         switch (this.role) {
-//             case 'admin_v3':
-//                 this.ai_generation_limit = 3;
-//                 break;
-//             case 'admin_v7':
-//                 this.ai_generation_limit = 7;
-//                 break;
-//             case 'admin_v10':
-//                 this.ai_generation_limit = 10;
-//                 break;
-//             default:
-//                 this.ai_generation_limit = 0;
-//                 break;
-//         }
-//     }
-//     next();
-// });
+UserSchema.pre('save', function (next) {
+    if (this.isNew || this.isModified('subscription_plan')) {
+        switch (this.subscription_plan) {
+            case 'admin_v3':
+                this.ai_generation_limit = 3;
+                break;
+            case 'admin_v7':
+                this.ai_generation_limit = 7;
+                break;
+            case 'admin_v10':
+                this.ai_generation_limit = 10;
+                break;
+            default: // Handle 'free' or other plans explicitly
+                this.ai_generation_limit = 100; // Or any default value you want
+                break;
+        }
+    }
+    next();
+});
+
 
 // Create a model from the schema
 export default mongoose.model<IUser>("User", UserSchema);
