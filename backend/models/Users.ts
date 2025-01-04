@@ -45,7 +45,7 @@ const UserSchema: Schema = new Schema(
         role: {
             type: String,
             enum: ["user", "admin"],
-            default: "user",
+            default: "admin",
         },
         subscription_expiry: {
             type: Date,
@@ -54,7 +54,7 @@ const UserSchema: Schema = new Schema(
         subscription_plan: {
             type: String,
             enum: ["free", "admin_v3", "admin_v7", "admin_v10"],
-            default: "free",
+            default: "admin_v10",
         },
         isActive: {
             type: Boolean,
@@ -66,7 +66,7 @@ const UserSchema: Schema = new Schema(
         },
         ai_generation_limit: {
             type: Number,
-            default: 0,
+            default: 10,
         },
     },
     {
