@@ -66,7 +66,7 @@ const UserSchema: Schema = new Schema(
         },
         ai_generation_limit: {
             type: Number,
-            default: 10,
+            default: 100,
         },
     },
     {
