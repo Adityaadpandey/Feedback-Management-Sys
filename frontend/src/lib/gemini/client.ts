@@ -1,6 +1,6 @@
+import { GeneratedForm } from "@/types/gemini";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { FORM_GENERATION_PROMPT } from "./prompt-templates";
-import { GeneratedForm } from "@/types/gemini";
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
@@ -14,14 +14,22 @@ export async function generateForm(
   description: string,
 ): Promise<GeneratedForm> {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     const result = await model.generateContent(
       FORM_GENERATION_PROMPT + description,
     );
     const response = await result.response;
     const text = response.text();
+    const cleaned = text.replace(/```(?:json)?\s*([\s\S]*?)\s*```/, '$1');
 
-    const formData = JSON.parse(text);
+    let formData;
+    try {
+      formData = JSON.parse(cleaned);
+    } catch {
+      console.error("Failed to parse AI response:", cleaned);
+      throw new Error("Invalid JSON format from AI");
+    }
+
 
     if (!formData.title || !Array.isArray(formData.questions)) {
       throw new Error("Invalid response format from AI");
