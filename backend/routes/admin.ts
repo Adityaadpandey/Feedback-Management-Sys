@@ -23,7 +23,7 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey || "");
 
 const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash-8b",
+    model: "gemini-1.5-flash",
     systemInstruction: `
 You are provided with a feedback form and its responses. Analyze them and provide a summary in the following exact JSON format:
 
@@ -179,13 +179,13 @@ router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res: Resp
 
 
 // TODO: Leaveing this for now but will se if needed afterwards
-router.get('/checktokens', authenticate,  async (req: RequestWithUser, res: Response): Promise<any> => {
+router.get('/checktokens', authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
     const userId = req.user?._id;
     if (!userId) return res.status(401).json({ message: "Authentication required" });
     try {
         const user = await User.findById(userId);
         if (!user) throw new Error("User not found");
-        res.json({tokens: user.ai_generation_limit});
+        res.json({ tokens: user.ai_generation_limit });
     } catch (error) {
         handleError(res, 500, "Error checking tokens", error);
     }
