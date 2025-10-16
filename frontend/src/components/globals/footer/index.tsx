@@ -76,7 +76,7 @@ export function Footer() {
                   transition={{ delay: 0.5, duration: 0.4 }}
                   className="flex items-center text-sm text-primary"
                 >
-                  Product by T-Rex
+                  Product by Aditya
                 </motion.span>
               </div>
             </motion.div>
