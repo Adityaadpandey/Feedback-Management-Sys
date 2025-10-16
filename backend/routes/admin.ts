@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { Request, Response, Router } from "express";
 import { authenticate } from "../middleware/authenticator";
 import Analytics from "../models/Analytics";
@@ -17,14 +17,20 @@ interface RequestWithUser extends Request {
 
 const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
-    console.warn("GEMINI_API_KEY is not set in the environment variables");
+    console.error("❌ GEMINI_API_KEY is not set in the environment variables");
+    throw new Error("GEMINI_API_KEY is required");
 }
 
-const genAI = new GoogleGenerativeAI(apiKey || "");
+console.log("✅ GEMINI_API_KEY is set");
 
-const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    systemInstruction: `
+// Initialize the new Google GenAI SDK
+const ai = new GoogleGenAI({
+    vertexai: false,
+    apiKey: apiKey,
+});
+
+// System instruction for the AI
+const SYSTEM_INSTRUCTION = `
 You are provided with a feedback form and its responses. Analyze them and provide a summary in the following exact JSON format:
 
 {
@@ -35,35 +41,64 @@ You are provided with a feedback form and its responses. Analyze them and provid
 
 Please ensure:
 1. The JSON is correctly formatted and valid.
-2. Summarize feedback clearly and provide actionable insights.`,
-});
+2. Summarize feedback clearly and provide actionable insights.`;
 
+// Configuration for content generation
 const generationConfig = {
     temperature: 1,
     topP: 0.95,
     topK: 40,
     maxOutputTokens: 8192,
-    responseMimeType: "application/json",
+    responseMimeType: "application/json" as const,
 };
 
 async function runAI(prompt: string): Promise<any> {
     try {
-        const chatSession = model.startChat({
-            generationConfig,
-            history: [],
+        console.log("🤖 Sending request to Gemini...");
+
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash-exp", // Latest Gemini 2.0 model
+            contents: [
+                {
+                    role: "user",
+                    parts: [{ text: SYSTEM_INSTRUCTION + "\n\n" + prompt }],
+                },
+            ],
+            config: generationConfig,
         });
 
-        const result = await chatSession.sendMessage(prompt);
-        return JSON.parse(result.response.text()); // Parse AI response directly
-    } catch (error) {
-        console.error("Error during AI processing:", error);
-        throw new Error("Failed to generate analytics from AI.");
+        console.log("✅ AI response received");
+
+        // Extract text from response
+        const responseText = response.text;
+
+        if (!responseText) {
+            throw new Error("Empty response from AI");
+        }
+
+        // Parse and return JSON
+        return JSON.parse(responseText);
+    } catch (error: any) {
+        console.error("❌ Error during AI processing:", error);
+
+        // Provide more specific error messages
+        if (error.code === 404) {
+            throw new Error("Model not found. Please check your API key and model availability.");
+        } else if (error.code === 403) {
+            throw new Error("API key does not have permission to access this model.");
+        } else if (error.code === 429) {
+            throw new Error("Rate limit exceeded. Please try again later.");
+        } else if (error.message?.includes("API key")) {
+            throw new Error("Invalid API key. Please check your GEMINI_API_KEY.");
+        }
+
+        throw new Error(`Failed to generate analytics from AI: ${error.message || 'Unknown error'}`);
     }
 }
 
 // Centralized error handler
 const handleError = (res: Response, statusCode: number, message: string, error?: any) => {
-    console.error(error); // Log error details for debugging
+    console.error("❌", message, error);
 
     // If error message indicates AI generation limit exceeded
     if (error && error.message === "AI generation limit exceeded") {
@@ -74,7 +109,10 @@ const handleError = (res: Response, statusCode: number, message: string, error?:
     }
 
     // General error handler for other errors
-    res.status(statusCode).json({ message, error });
+    res.status(statusCode).json({
+        message,
+        error: error?.message || "An unexpected error occurred"
+    });
 };
 
 // Utility function to decrement user AI generation limit
@@ -91,7 +129,6 @@ async function decrementUserLimit(userId: string): Promise<void> {
     });
 }
 
-
 const router = Router();
 
 /** GET analytics for a specific form by ID */
@@ -101,7 +138,6 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response):
 
     if (!id) return res.status(400).json({ message: "Form ID is required" });
     if (!userId) return res.status(401).json({ message: "Authentication required" });
-
 
     try {
         // Check if analytics already exist
@@ -125,7 +161,6 @@ router.get("/ai/:id", authenticate, async (req: RequestWithUser, res: Response):
                 formId: id,
                 ...aiResponse,
             });
-
         }
 
         res.json(analytics);
@@ -177,11 +212,11 @@ router.post("/ai/push/:id", authenticate, async (req: RequestWithUser, res: Resp
     }
 });
 
-
-// TODO: Leaveing this for now but will se if needed afterwards
+/** GET remaining tokens/credits for the user */
 router.get('/checktokens', authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
     const userId = req.user?._id;
     if (!userId) return res.status(401).json({ message: "Authentication required" });
+
     try {
         const user = await User.findById(userId);
         if (!user) throw new Error("User not found");
@@ -191,22 +226,34 @@ router.get('/checktokens', authenticate, async (req: RequestWithUser, res: Respo
     }
 });
 
-
+/** POST to manually decrement user tokens (for testing) */
 router.post('/sendtokens', authenticate, async (req: RequestWithUser, res: Response): Promise<any> => {
     const userId = req.user?._id;
 
     if (!userId) return res.status(401).json({ message: "Authentication required" });
+
     try {
         const user = await User.findById(userId);
         if (!user) throw new Error("User not found");
+
+        if (user.ai_generation_limit <= 0) {
+            return res.status(400).json({
+                message: "No tokens remaining",
+                tokens: 0
+            });
+        }
+
         await User.findByIdAndUpdate(userId, {
             ai_generation_limit: user.ai_generation_limit - 1,
         });
-        res.status(200).json({ message: "Tokens sent successfully" });
+
+        res.status(200).json({
+            message: "Token decremented successfully",
+            remaining_tokens: user.ai_generation_limit - 1
+        });
     } catch (error) {
         handleError(res, 500, "Error sending tokens", error);
     }
-})
-
+});
 
 export const admin = router;
